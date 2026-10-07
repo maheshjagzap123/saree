@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-ivory text-charcoal font-sans antialiased;
+  }
+  h1, h2, h3, h4 {
+    @apply font-serif text-charcoal;
+  }
+  :focus-visible {
+    @apply outline-none ring-2 ring-wine ring-offset-2 ring-offset-ivory;
+  }
+}
+
+@layer components {
+  .container-max {
+    @apply mx-auto w-full max-w-container px-5 sm:px-8 lg:px-12;
+  }
+  .eyebrow {
+    @apply text-xs uppercase tracking-wider2 text-gold font-medium;
+  }
+  .link-underline {
+    @apply relative after:absolute after:left-0 after:-bottom-0.5 after:h-px after:w-0 after:bg-current after:transition-all hover:after:w-full;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

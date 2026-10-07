@@ -1,0 +1,15 @@
+# Vastraa Paithani — robots.txt
+User-agent: *
+Allow: /
+Allow: /shop
+Allow: /collections
+Allow: /products
+Allow: /journal
+
+Disallow: /admin
+Disallow: /account
+Disallow: /cart
+Disallow: /checkout
+Disallow: /search?
+
+Sitemap: https://vastraapaithani.example/sitemap.xml

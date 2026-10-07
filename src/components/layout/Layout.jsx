@@ -6,6 +6,7 @@ import Footer from './Footer'
 import WhatsAppButton from './WhatsAppButton'
 import CartDrawer from '../cart/CartDrawer'
 import QuickView from '../product/QuickView'
+import CompareBar from '../product/CompareBar'
 
 // Scrolls to top on route change.
 function ScrollToTop() {
@@ -29,6 +30,7 @@ export default function Layout() {
       <WhatsAppButton />
       <CartDrawer />
       <QuickView />
+      <CompareBar />
     </div>
   )
 }

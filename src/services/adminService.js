@@ -14,12 +14,58 @@ export async function getDashboardStats() {
     supabase.from('orders').select('total', { count: 'exact' }),
   ])
   const revenue = (orders.data || []).reduce((sum, o) => sum + Number(o.total || 0), 0)
+  const orderCount = orders.count ?? 0
   return {
     products: products.count ?? 0,
     collections: collections.count ?? 0,
-    orders: orders.count ?? 0,
+    orders: orderCount,
     revenue,
+    avgOrderValue: orderCount ? revenue / orderCount : 0,
   }
+}
+
+// Daily revenue + order counts over the last `days` days (for trend charts).
+export async function getSalesSeries(days = 14) {
+  const since = new Date()
+  since.setDate(since.getDate() - (days - 1))
+  since.setHours(0, 0, 0, 0)
+
+  const { data, error } = await supabase
+    .from('orders')
+    .select('total, created_at')
+    .gte('created_at', since.toISOString())
+  if (error) throw error
+
+  // Build a zero-filled bucket per day.
+  const buckets = []
+  for (let i = 0; i < days; i++) {
+    const d = new Date(since)
+    d.setDate(since.getDate() + i)
+    buckets.push({ date: d, label: d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }), revenue: 0, orders: 0 })
+  }
+  ;(data || []).forEach((o) => {
+    const d = new Date(o.created_at)
+    const idx = Math.floor((d - since) / 86400000)
+    if (idx >= 0 && idx < buckets.length) {
+      buckets[idx].revenue += Number(o.total || 0)
+      buckets[idx].orders += 1
+    }
+  })
+  return buckets
+}
+
+// Top products by quantity sold (from order_items).
+export async function getTopProducts(limit = 5) {
+  const { data, error } = await supabase.from('order_items').select('name, quantity, price')
+  if (error) throw error
+  const map = new Map()
+  ;(data || []).forEach((it) => {
+    const cur = map.get(it.name) || { name: it.name, qty: 0, revenue: 0 }
+    cur.qty += it.quantity
+    cur.revenue += Number(it.price) * it.quantity
+    map.set(it.name, cur)
+  })
+  return [...map.values()].sort((a, b) => b.qty - a.qty).slice(0, limit)
 }
 
 // ---------- Products ----------
@@ -35,7 +81,7 @@ export async function adminListProducts() {
 export async function adminGetProduct(id) {
   const { data, error } = await supabase
     .from('products')
-    .select('*, product_images(id, url, position, is_primary)')
+    .select('*, product_images(id, url, position, is_primary, image_type, alt_text, display_order)')
     .eq('id', id)
     .maybeSingle()
   if (error) throw error
@@ -67,6 +113,17 @@ export async function adminSaveProduct(form) {
     is_featured: form.is_featured ?? false,
     is_bestseller: form.is_bestseller ?? false,
     is_new: form.is_new ?? false,
+    is_exclusive: form.is_exclusive ?? false,
+    // Editorial fields
+    product_story: form.product_story || null,
+    craft_story: form.craft_story || null,
+    styling_notes: form.styling_notes || null,
+    occasion_notes: form.occasion_notes || null,
+    care_instructions: form.care_instructions || null,
+    // SEO
+    seo_title: form.seo_title || null,
+    seo_description: form.seo_description || null,
+    og_image: form.og_image || null,
     updated_at: new Date().toISOString(),
   }
 
@@ -118,6 +175,22 @@ export async function setPrimaryImage(productId, imageId) {
   await supabase.from('product_images').update({ is_primary: false }).eq('product_id', productId)
   const { error } = await supabase.from('product_images').update({ is_primary: true }).eq('id', imageId)
   if (error) throw error
+}
+
+// Update image metadata (alt text, image type).
+export async function updateProductImage(imageId, patch) {
+  const { data, error } = await supabase.from('product_images').update(patch).eq('id', imageId).select().single()
+  if (error) throw error
+  return data
+}
+
+// Persist a new ordering: writes display_order + position for each image id in order.
+export async function reorderProductImages(orderedIds) {
+  await Promise.all(
+    orderedIds.map((id, idx) =>
+      supabase.from('product_images').update({ display_order: idx, position: idx }).eq('id', id)
+    )
+  )
 }
 
 // ---------- Collections ----------

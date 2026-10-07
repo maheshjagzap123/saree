@@ -7,8 +7,9 @@ import { HeartIcon } from '../ui/icons'
 // wishlist. "View Saree →" appears on hover (desktop) and is always usable via the card
 // link on mobile — no essential action is hover-only.
 export default function ProductCard({ product }) {
-  const { toggleWish, isWished, openQuickView } = useStore()
+  const { toggleWish, isWished, openQuickView, inCompare, toggleCompare } = useStore()
   const wished = isWished(product.id)
+  const comparing = inCompare(product.slug)
 
   // Show at most one meaningful badge, quietly.
   const badge = product.is_new ? 'New' : product.is_bestseller ? 'Bestseller' : null
@@ -62,13 +63,22 @@ export default function ProductCard({ product }) {
             >
               View Saree →
             </Link>
-            <button
-              type="button"
-              onClick={() => openQuickView(product)}
-              className="pointer-events-auto text-xs uppercase tracking-wider2 text-ivory/80 hover:text-ivory"
-            >
-              Quick View
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => toggleCompare(product.slug)}
+                className={`pointer-events-auto text-xs uppercase tracking-wider2 ${comparing ? 'text-gold-soft' : 'text-ivory/80 hover:text-ivory'}`}
+              >
+                {comparing ? '✓ Compare' : 'Compare'}
+              </button>
+              <button
+                type="button"
+                onClick={() => openQuickView(product)}
+                className="pointer-events-auto text-xs uppercase tracking-wider2 text-ivory/80 hover:text-ivory"
+              >
+                Quick View
+              </button>
+            </div>
           </div>
         </div>
       </div>

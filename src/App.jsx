@@ -18,6 +18,8 @@ import Store from './pages/public/Store'
 import Faq from './pages/public/Faq'
 import Policy from './pages/public/Policy'
 import CraftLibrary from './pages/public/CraftLibrary'
+import FindYourSaree from './pages/public/FindYourSaree'
+import Compare from './pages/public/Compare'
 import NotFound from './pages/public/NotFound'
 
 import AuthPage from './pages/account/AuthPage'
@@ -52,6 +54,8 @@ export default function App() {
         <Route path="journal" element={<Journal />} />
         <Route path="craft" element={<CraftLibrary />} />
         <Route path="craft/:slug" element={<CraftLibrary />} />
+        <Route path="find" element={<FindYourSaree />} />
+        <Route path="compare" element={<Compare />} />
         <Route path="store" element={<Store />} />
         <Route path="search" element={<Search />} />
         <Route path="faq" element={<Faq />} />

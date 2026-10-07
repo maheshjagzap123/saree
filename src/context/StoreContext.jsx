@@ -7,6 +7,8 @@ const StoreContext = createContext(null)
 
 const CART_KEY = 'vastraa.cart'
 const WISH_KEY = 'vastraa.wishlist'
+const COMPARE_KEY = 'vastraa.compare'
+const COMPARE_MAX = 3
 
 function load(key, fallback) {
   try {
@@ -56,6 +58,7 @@ export function StoreProvider({ children }) {
   const [wishlist, setWishlist] = useState(() => load(WISH_KEY, []))
   const [cartOpen, setCartOpen] = useState(false)
   const [quickView, setQuickView] = useState(null)
+  const [compare, setCompare] = useState(() => load(COMPARE_KEY, []))
 
   useEffect(() => {
     localStorage.setItem(CART_KEY, JSON.stringify(cart))
@@ -63,6 +66,9 @@ export function StoreProvider({ children }) {
   useEffect(() => {
     localStorage.setItem(WISH_KEY, JSON.stringify(wishlist))
   }, [wishlist])
+  useEffect(() => {
+    localStorage.setItem(COMPARE_KEY, JSON.stringify(compare))
+  }, [compare])
 
   const value = useMemo(() => {
     const cartCount = cart.reduce((n, i) => n + i.qty, 0)
@@ -92,8 +98,21 @@ export function StoreProvider({ children }) {
       quickView,
       openQuickView: (product) => setQuickView(product),
       closeQuickView: () => setQuickView(null),
+      // compare (stores product slugs, max 3)
+      compare,
+      compareCount: compare.length,
+      compareMax: COMPARE_MAX,
+      inCompare: (slug) => compare.includes(slug),
+      toggleCompare: (slug) =>
+        setCompare((c) => {
+          if (c.includes(slug)) return c.filter((s) => s !== slug)
+          if (c.length >= COMPARE_MAX) return c // ignore beyond max
+          return [...c, slug]
+        }),
+      removeCompare: (slug) => setCompare((c) => c.filter((s) => s !== slug)),
+      clearCompare: () => setCompare([]),
     }
-  }, [cart, wishlist, cartOpen, quickView])
+  }, [cart, wishlist, cartOpen, quickView, compare])
 
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>
 }

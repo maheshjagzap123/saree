@@ -114,6 +114,9 @@ export default function Home() {
             <h2 className="mt-4 font-serif text-4xl font-light sm:text-5xl">
               Every occasion has a colour, a weave and a story.
             </h2>
+            <Button to="/find" variant="ghost" className="mt-4 px-0 link-underline">
+              Try the guided finder →
+            </Button>
           </Reveal>
           <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {discoveryPaths.map((d, i) => (

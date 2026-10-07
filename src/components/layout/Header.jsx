@@ -21,7 +21,7 @@ const nav = [
       {
         heading: 'Discover',
         links: [
-          ['Find Your Paithani', '/shop'],
+          ['Find Your Paithani', '/find'],
           ['Signature Edit', '/shop?filter=bestseller'],
           ['New Arrivals', '/shop?filter=new'],
           ['Bridal', '/collections/bridal-paithani'],

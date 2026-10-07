@@ -33,6 +33,11 @@ function mapProduct(row) {
     compare_at_price: row.compare_at_price != null ? Number(row.compare_at_price) : null,
     short_description: row.short_description,
     description: row.description,
+    product_story: row.product_story,
+    craft_story: row.craft_story,
+    styling_notes: row.styling_notes,
+    occasion_notes: row.occasion_notes,
+    care_instructions: row.care_instructions,
     category: row.categories?.name || row.category || 'Paithani',
     collection: row.collections?.slug || row.collection || null,
     color: row.color,
@@ -54,7 +59,7 @@ function mapProduct(row) {
 }
 
 const PRODUCT_SELECT =
-  'id, name, slug, sku, price, compare_at_price, short_description, description, color, fabric, weave_type, border_type, motif, occasion, saree_length, saree_width, blouse_included, stock_quantity, status, is_featured, is_bestseller, is_new, collections:collection_id ( slug, name ), categories:category_id ( name ), product_images ( url, position, is_primary )'
+  'id, name, slug, sku, price, compare_at_price, short_description, description, product_story, craft_story, styling_notes, occasion_notes, care_instructions, color, fabric, weave_type, border_type, motif, occasion, saree_length, saree_width, blouse_included, stock_quantity, status, is_featured, is_bestseller, is_new, collections:collection_id ( slug, name ), categories:category_id ( name ), product_images ( url, position, is_primary )'
 
 export async function listProducts() {
   if (isSupabaseConfigured) {

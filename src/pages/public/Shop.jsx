@@ -55,7 +55,7 @@ export default function Shop() {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const { data: products } = useAsync(() => listProducts(), [], [])
 
-  // Seed price band from mega-menu query (?min=&max=).
+  // Seed filters from query params (?min=&max= price band, ?color= colour).
   useEffect(() => {
     const min = Number(params.get('min'))
     const max = Number(params.get('max'))
@@ -65,6 +65,8 @@ export default function Shop() {
       )
       if (match) setBands([match.label])
     }
+    const color = params.get('color')
+    if (color && COLORS.includes(color)) setColors([color])
   }, [params])
 
   const toggle = (setter) => (val) =>

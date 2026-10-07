@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import { useStore } from '../../context/StoreContext'
 import { useAuth } from '../../context/AuthContext'
-import MegaMenu from './MegaMenu'
 import {
   SearchIcon,
   UserIcon,
@@ -13,88 +12,130 @@ import {
   ChevronDown,
 } from '../ui/icons'
 
-const navLinks = [
-  { label: 'Shop', to: '/shop' },
-  { label: 'Collections', to: '/collections', mega: true },
-  { label: 'New Arrivals', to: '/shop?filter=new' },
-  { label: 'Bridal', to: '/collections/bridal-paithani' },
-  { label: 'Our Story', to: '/about' },
+// Editorial navigation. Items with `columns` open a mega panel on hover (desktop).
+const nav = [
+  {
+    label: 'Discover',
+    to: '/shop',
+    columns: [
+      {
+        heading: 'Discover',
+        links: [
+          ['Find Your Paithani', '/shop'],
+          ['Signature Edit', '/shop?filter=bestseller'],
+          ['New Arrivals', '/shop?filter=new'],
+          ['Bridal', '/collections/bridal-paithani'],
+          ['Festive', '/collections/festive-paithani'],
+          ['Gifts', '/shop'],
+        ],
+      },
+    ],
+  },
+  {
+    label: 'Sarees',
+    to: '/shop',
+    columns: [
+      {
+        heading: 'Sarees',
+        links: [
+          ['All Sarees', '/shop'],
+          ['Single Muniya', '/search?q=single%20muniya'],
+          ['Triple Muniya', '/search?q=triple%20muniya'],
+          ['Brocade', '/search?q=brocade'],
+          ['Tissue', '/search?q=tissue'],
+          ['Traditional', '/collections/traditional-paithani'],
+          ['Designer', '/collections/designer-paithani'],
+        ],
+      },
+    ],
+  },
+  {
+    label: 'The Craft',
+    to: '/about',
+    columns: [
+      {
+        heading: 'The Craft',
+        links: [
+          ['The Paithani', '/about'],
+          ['Craft Library', '/craft'],
+          ['The Atelier', '/about'],
+          ['Motifs & Weaves', '/craft'],
+        ],
+      },
+    ],
+  },
   { label: 'Journal', to: '/journal' },
+  { label: 'About', to: '/about' },
 ]
+
+function MegaPanel({ columns, onNavigate }) {
+  return (
+    <div className="grid min-w-[260px] gap-10 p-8" style={{ gridTemplateColumns: `repeat(${columns.length}, minmax(0,1fr))` }}>
+      {columns.map((col) => (
+        <div key={col.heading}>
+          <h3 className="eyebrow mb-4">{col.heading}</h3>
+          <ul className="space-y-2.5 text-sm text-muted">
+            {col.links.map(([label, to]) => (
+              <li key={label}>
+                <Link to={to} onClick={onNavigate} className="link-underline hover:text-wine">{label}</Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  )
+}
 
 export default function Header() {
   const { cartCount, wishCount, setCartOpen } = useStore()
   const { isAuthed, isAdmin, signOut } = useAuth()
-  const [megaOpen, setMegaOpen] = useState(false)
+  const [openMenu, setOpenMenu] = useState(null)
   const [mobileOpen, setMobileOpen] = useState(false)
-
-  const IconBtn = ({ children, ...p }) => (
-    <button
-      type="button"
-      className="text-xl text-charcoal hover:text-wine transition-colors"
-      {...p}
-    >
-      {children}
-    </button>
-  )
 
   return (
     <header className="sticky top-0 z-30 border-b border-beige bg-ivory/95 backdrop-blur">
       <div className="container-max flex items-center justify-between gap-6 py-4">
         {/* Mobile menu toggle */}
-        <button
-          type="button"
-          className="text-2xl lg:hidden"
-          aria-label="Open menu"
-          onClick={() => setMobileOpen(true)}
-        >
+        <button type="button" className="text-2xl lg:hidden" aria-label="Open menu" onClick={() => setMobileOpen(true)}>
           <MenuIcon />
         </button>
 
         {/* Logo */}
-        <Link to="/" className="shrink-0 text-center">
-          <span className="block font-serif text-2xl leading-none tracking-wide text-wine">
-            VASTRAA
-          </span>
-          <span className="block text-[10px] tracking-wider2 text-gold">PAITHANI</span>
+        <Link to="/" className="shrink-0 text-center" aria-label="Vastraa Paithani home">
+          <span className="block font-serif text-2xl font-light leading-none tracking-[0.12em] text-wine">VASTRAA</span>
+          <span className="block text-[10px] tracking-wider2 text-gold-antique">PAITHANI</span>
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden flex-1 items-center justify-center gap-7 lg:flex">
-          {navLinks.map((l) =>
-            l.mega ? (
+        <nav className="hidden flex-1 items-center justify-center gap-8 lg:flex">
+          {nav.map((item) =>
+            item.columns ? (
               <div
-                key={l.label}
+                key={item.label}
                 className="relative"
-                onMouseEnter={() => setMegaOpen(true)}
-                onMouseLeave={() => setMegaOpen(false)}
+                onMouseEnter={() => setOpenMenu(item.label)}
+                onMouseLeave={() => setOpenMenu(null)}
               >
-                <NavLink
-                  to={l.to}
-                  className="flex items-center gap-1 text-sm tracking-wide text-charcoal hover:text-wine"
-                >
-                  {l.label}
+                <NavLink to={item.to} className="flex items-center gap-1 text-sm tracking-wide text-charcoal hover:text-wine">
+                  {item.label}
                   <ChevronDown className="text-xs" />
                 </NavLink>
-                {megaOpen && (
-                  <div className="absolute left-1/2 top-full w-[640px] -translate-x-1/2 animate-fade-in">
+                {openMenu === item.label && (
+                  <div className="absolute left-1/2 top-full -translate-x-1/2 animate-fade-in">
                     <div className="mt-4 border border-beige bg-ivory shadow-xl">
-                      <MegaMenu onNavigate={() => setMegaOpen(false)} />
+                      <MegaPanel columns={item.columns} onNavigate={() => setOpenMenu(null)} />
                     </div>
                   </div>
                 )}
               </div>
             ) : (
               <NavLink
-                key={l.label}
-                to={l.to}
-                className={({ isActive }) =>
-                  `text-sm tracking-wide hover:text-wine ${
-                    isActive ? 'text-wine' : 'text-charcoal'
-                  }`
-                }
+                key={item.label}
+                to={item.to}
+                className={({ isActive }) => `text-sm tracking-wide hover:text-wine ${isActive ? 'text-wine' : 'text-charcoal'}`}
               >
-                {l.label}
+                {item.label}
               </NavLink>
             )
           )}
@@ -115,19 +156,15 @@ export default function Header() {
           <Link to="/account/wishlist" aria-label="Wishlist" className="relative text-xl text-charcoal hover:text-wine">
             <HeartIcon />
             {wishCount > 0 && (
-              <span className="absolute -right-2 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-wine px-1 text-[10px] text-ivory">
-                {wishCount}
-              </span>
+              <span className="absolute -right-2 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-wine px-1 text-[10px] text-ivory">{wishCount}</span>
             )}
           </Link>
-          <IconBtn aria-label="Open bag" className="relative" onClick={() => setCartOpen(true)}>
+          <button type="button" aria-label="Open bag" className="relative text-xl text-charcoal hover:text-wine" onClick={() => setCartOpen(true)}>
             <BagIcon />
             {cartCount > 0 && (
-              <span className="absolute -right-2 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-wine px-1 text-[10px] text-ivory">
-                {cartCount}
-              </span>
+              <span className="absolute -right-2 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-wine px-1 text-[10px] text-ivory">{cartCount}</span>
             )}
-          </IconBtn>
+          </button>
         </div>
       </div>
 
@@ -135,38 +172,35 @@ export default function Header() {
       {mobileOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-charcoal/40" onClick={() => setMobileOpen(false)} />
-          <div className="absolute left-0 top-0 h-full w-72 bg-ivory p-6 animate-fade-in">
+          <div className="absolute left-0 top-0 h-full w-80 max-w-[85vw] overflow-y-auto bg-ivory p-6 animate-fade-in">
             <div className="mb-8 flex items-center justify-between">
-              <span className="font-serif text-xl text-wine">Menu</span>
-              <button aria-label="Close menu" onClick={() => setMobileOpen(false)} className="text-2xl">
-                <CloseIcon />
-              </button>
+              <span className="font-serif text-xl text-wine">Vastraa</span>
+              <button aria-label="Close menu" onClick={() => setMobileOpen(false)} className="text-2xl"><CloseIcon /></button>
             </div>
-            <nav className="flex flex-col gap-4">
-              {navLinks.map((l) => (
-                <NavLink
-                  key={l.label}
-                  to={l.to}
-                  onClick={() => setMobileOpen(false)}
-                  className="text-base text-charcoal hover:text-wine"
-                >
-                  {l.label}
-                </NavLink>
+            <nav className="flex flex-col gap-5">
+              {nav.map((item) => (
+                <div key={item.label}>
+                  <NavLink to={item.to} onClick={() => setMobileOpen(false)} className="font-serif text-lg text-charcoal hover:text-wine">
+                    {item.label}
+                  </NavLink>
+                  {item.columns && (
+                    <ul className="mt-2 space-y-2 pl-3 text-sm text-muted">
+                      {item.columns[0].links.map(([label, to]) => (
+                        <li key={label}>
+                          <Link to={to} onClick={() => setMobileOpen(false)} className="hover:text-wine">{label}</Link>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
               ))}
               <hr className="my-2 border-beige" />
               <Link to="/search" onClick={() => setMobileOpen(false)} className="text-base">Search</Link>
-              {isAdmin && (
-                <Link to="/admin" onClick={() => setMobileOpen(false)} className="text-base">Admin</Link>
-              )}
+              {isAdmin && <Link to="/admin" onClick={() => setMobileOpen(false)} className="text-base">Admin</Link>}
               {isAuthed ? (
                 <>
                   <Link to="/account" onClick={() => setMobileOpen(false)} className="text-base">Account</Link>
-                  <button
-                    onClick={() => { setMobileOpen(false); signOut() }}
-                    className="text-left text-base text-wine"
-                  >
-                    Sign Out
-                  </button>
+                  <button onClick={() => { setMobileOpen(false); signOut() }} className="text-left text-base text-wine">Sign Out</button>
                 </>
               ) : (
                 <Link to="/login" onClick={() => setMobileOpen(false)} className="text-base">Sign In</Link>

@@ -29,23 +29,28 @@ _Last updated: 2026-10-07_
 | Cart drawer | ✅ | |
 | SEO per-page meta helper (Seo component) | ✅ | title, description, canonical, OG |
 | robots.txt | ✅ | allow/block per plan |
-| Supabase client stub | ✅ | reads env, warns if missing |
+| Supabase client + `.env` wired | ✅ | connects to project; anon key only |
+| Data services (products/collections) | ✅ | Supabase reads + automatic mock fallback |
 | DB schema SQL | ✅ | `supabase/schema.sql` (ready to apply) |
+| Seed SQL | ✅ | `supabase/seed.sql` (demo catalog, ready to apply) |
 
 ## Pending (future passes)
 
 | Area | Status | Notes |
 |------|--------|-------|
-| Real Supabase project + env wiring | ⬜ | create project, set `.env` |
-| Apply schema + RLS policies | ⬜ | run `supabase/schema.sql`, add policies |
-| Auth (email/password, Google, reset) | ⬜ | |
-| Storage buckets + upload | ⬜ | product/collection/blog/banner/avatars |
-| Admin dashboard + product CRUD | ⬜ | Phase 4 |
-| Image management (reorder, primary) | ⬜ | |
-| Collections/categories admin | ⬜ | |
-| Orders admin + status/tracking | ⬜ | |
-| Customer account area | ⬜ | profile, orders, addresses, settings |
-| Checkout flow + payment | ⬜ | Phase 6 |
+| Apply schema + seed in Supabase | ✅ | applied via pooler; 5 collections, 8 products, 16 images live |
+| Live data verified (anon read) | ✅ | public read policy confirmed working from the browser key |
+| RLS policies (public/own/admin) | ✅ | applied + verified via `migration_auth_admin.sql` |
+| Auth (email/password) | ✅ | signup/login/logout; no Google/reset by design |
+| &nbsp;&nbsp;↳ email confirmation | ⚠️ | **ACTION:** turn OFF "Confirm email" in dashboard for instant login |
+| Storage bucket + image upload | ✅ | `product-images` bucket (public) + admin upload in product editor |
+| Admin dashboard + product CRUD | ✅ | `/admin` dashboard, products list + full editor |
+| Image management (primary, remove) | ✅ | upload, set primary, delete in product editor |
+| Collections/categories admin | ✅ | `/admin/collections`, `/admin/categories` |
+| Orders admin + status/tracking | ✅ | `/admin/orders` list + detail, status + tracking |
+| Customer account area | ✅ | account, orders, order detail + tracking, addresses, profile, wishlist |
+| Checkout flow (no payment) | ✅ | details → review → place order; writes order + items |
+| &nbsp;&nbsp;↳ online payment | ⬜ | intentionally skipped (pay on delivery / WhatsApp) |
 | Journal articles + Article schema | 🟡 | index built, article pages pending |
 | Reviews, coupons, banners CMS | ⬜ | V2 |
 | Homepage CMS (admin-editable content) | ⬜ | Phase 53 |

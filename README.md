@@ -22,6 +22,40 @@ npm run preview  # preview the production build
 
 Open the URL printed by Vite (default: http://localhost:5173).
 
+### Connect Supabase (optional — the site runs on mock data without it)
+
+1. Copy `.env.example` to `.env` and fill in `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY`
+   (anon/public key only — never the service-role key).
+2. Apply the schema and seed. Either:
+   - In the Supabase dashboard → SQL Editor, run `supabase/schema.sql`, then `supabase/seed.sql`; or
+   - Run them from the CLI (requires the DB password; connects via the pooler):
+     ```bash
+     $env:PROJECT_REF="<your-project-ref>"; $env:PGPASSWORD="<db-password>"; $env:PGREGIONS="ap-southeast-1"
+     node scripts/apply-sql.mjs supabase/schema.sql supabase/seed.sql
+     ```
+     `scripts/apply-sql.mjs` reads credentials from environment variables only (no secrets in the file).
+3. Restart `npm run dev`. The app reads live data; if a query fails it falls back to mock data.
+
+> Note: Supabase's direct `db.*` host is IPv6-only. On IPv4 networks use the connection
+> pooler host `aws-0-<region>.pooler.supabase.com` with user `postgres.<project-ref>`.
+
+### Auth + admin setup (two manual steps)
+
+Accounts, checkout, orders, and the admin panel are built. Two things must be set in your
+Supabase dashboard:
+
+1. **Instant login (no email verification):**
+   Authentication → Sign In / Providers → Email → turn **off** "Confirm email".
+   Without this, new signups must confirm by email before they can log in.
+
+2. **Make yourself admin** (to access `/admin`):
+   Sign up once in the app, then in SQL Editor run `supabase/make_admin.sql`
+   (edit the email first). Re-login to pick up the admin role.
+
+Also apply `supabase/migration_auth_admin.sql` (adds the profiles trigger, admin role
+helper, admin RLS policies, the `product-images` storage bucket, and the order-number
+trigger) if you haven't already.
+
 ---
 
 ## What this repo contains right now

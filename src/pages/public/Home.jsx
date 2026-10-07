@@ -5,8 +5,8 @@ import Button from '../../components/ui/Button'
 import SectionHeading from '../../components/ui/SectionHeading'
 import ProductGrid from '../../components/product/ProductGrid'
 import { StarIcon } from '../../components/ui/icons'
-import { products } from '../../data/products'
-import { collections } from '../../data/collections'
+import { listProducts, listCollections } from '../../services/productService'
+import { useAsync } from '../../hooks/useAsync'
 import {
   trustStrip,
   occasions,
@@ -29,10 +29,15 @@ const organizationLd = {
 }
 
 export default function Home() {
-  const featured = products.filter((p) => p.is_featured).slice(0, 4)
-  const newArrivals = products.filter((p) => p.is_new).slice(0, 4)
-  const bestsellers = products.filter((p) => p.is_bestseller).slice(0, 4)
-  const signature = products.filter((p) => p.price >= 35000).slice(0, 3)
+  const { data: products } = useAsync(() => listProducts(), [], [])
+  const { data: collections } = useAsync(() => listCollections(), [], [])
+  const list = products || []
+  const cols = collections || []
+
+  const featured = list.filter((p) => p.is_featured).slice(0, 4)
+  const newArrivals = list.filter((p) => p.is_new).slice(0, 4)
+  const bestsellers = list.filter((p) => p.is_bestseller).slice(0, 4)
+  const signature = list.filter((p) => p.price >= 35000).slice(0, 3)
 
   return (
     <>
@@ -90,7 +95,7 @@ export default function Home() {
             description="A considered edit of our finest weaves, organised for the moments that matter."
           />
           <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {collections.slice(0, 5).map((c, i) => (
+            {cols.slice(0, 5).map((c, i) => (
               <Link
                 key={c.slug}
                 to={`/collections/${c.slug}`}

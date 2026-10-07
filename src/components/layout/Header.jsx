@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import { useStore } from '../../context/StoreContext'
+import { useAuth } from '../../context/AuthContext'
 import MegaMenu from './MegaMenu'
 import {
   SearchIcon,
@@ -23,6 +24,7 @@ const navLinks = [
 
 export default function Header() {
   const { cartCount, wishCount, setCartOpen } = useStore()
+  const { isAuthed, isAdmin, signOut } = useAuth()
   const [megaOpen, setMegaOpen] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
 
@@ -103,7 +105,11 @@ export default function Header() {
           <Link to="/search" aria-label="Search" className="hidden text-xl text-charcoal hover:text-wine sm:block">
             <SearchIcon />
           </Link>
-          <Link to="/account" aria-label="Account" className="hidden text-xl text-charcoal hover:text-wine sm:block">
+          <Link
+            to={isAuthed ? '/account' : '/login'}
+            aria-label={isAuthed ? 'Account' : 'Sign in'}
+            className="hidden text-xl text-charcoal hover:text-wine sm:block"
+          >
             <UserIcon />
           </Link>
           <Link to="/account/wishlist" aria-label="Wishlist" className="relative text-xl text-charcoal hover:text-wine">
@@ -149,7 +155,22 @@ export default function Header() {
               ))}
               <hr className="my-2 border-beige" />
               <Link to="/search" onClick={() => setMobileOpen(false)} className="text-base">Search</Link>
-              <Link to="/account" onClick={() => setMobileOpen(false)} className="text-base">Account</Link>
+              {isAdmin && (
+                <Link to="/admin" onClick={() => setMobileOpen(false)} className="text-base">Admin</Link>
+              )}
+              {isAuthed ? (
+                <>
+                  <Link to="/account" onClick={() => setMobileOpen(false)} className="text-base">Account</Link>
+                  <button
+                    onClick={() => { setMobileOpen(false); signOut() }}
+                    className="text-left text-base text-wine"
+                  >
+                    Sign Out
+                  </button>
+                </>
+              ) : (
+                <Link to="/login" onClick={() => setMobileOpen(false)} className="text-base">Sign In</Link>
+              )}
               <Link to="/contact" onClick={() => setMobileOpen(false)} className="text-base">Contact</Link>
             </nav>
           </div>

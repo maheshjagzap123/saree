@@ -4,7 +4,8 @@ import Seo from '../../components/common/Seo'
 import Container from '../../components/ui/Container'
 import Button from '../../components/ui/Button'
 import ProductGrid from '../../components/product/ProductGrid'
-import { searchProducts } from '../../data/products'
+import { searchProducts } from '../../services/productService'
+import { useAsync } from '../../hooks/useAsync'
 
 export default function Search() {
   const [params, setParams] = useSearchParams()
@@ -15,7 +16,8 @@ export default function Search() {
     setInput(q)
   }, [q])
 
-  const results = q ? searchProducts(q) : []
+  const { data: resultsData } = useAsync(() => (q ? searchProducts(q) : Promise.resolve([])), [q], [])
+  const results = resultsData || []
 
   const submit = (e) => {
     e.preventDefault()

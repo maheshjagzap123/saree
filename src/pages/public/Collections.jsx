@@ -2,9 +2,13 @@ import { Link } from 'react-router-dom'
 import Seo from '../../components/common/Seo'
 import Container from '../../components/ui/Container'
 import SectionHeading from '../../components/ui/SectionHeading'
-import { collections } from '../../data/collections'
+import { listCollections } from '../../services/productService'
+import { useAsync } from '../../hooks/useAsync'
 
 export default function Collections() {
+  const { data: collectionsData } = useAsync(() => listCollections(), [], [])
+  const collections = collectionsData || []
+
   return (
     <>
       <Seo

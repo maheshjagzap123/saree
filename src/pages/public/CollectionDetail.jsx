@@ -3,13 +3,22 @@ import Seo, { SITE_URL } from '../../components/common/Seo'
 import Container from '../../components/ui/Container'
 import Button from '../../components/ui/Button'
 import ProductGrid from '../../components/product/ProductGrid'
-import { getCollection } from '../../data/collections'
-import { getProductsByCollection } from '../../data/products'
+import { getCollection, getProductsByCollection } from '../../services/productService'
+import { useAsync } from '../../hooks/useAsync'
 
 export default function CollectionDetail() {
   const { slug } = useParams()
-  const collection = getCollection(slug)
-  const items = getProductsByCollection(slug)
+  const { data: collection, loading } = useAsync(() => getCollection(slug), [slug])
+  const { data: itemsData } = useAsync(() => getProductsByCollection(slug), [slug], [])
+  const items = itemsData || []
+
+  if (loading) {
+    return (
+      <Container className="py-24 text-center">
+        <p className="text-muted">Loading…</p>
+      </Container>
+    )
+  }
 
   if (!collection) {
     return (

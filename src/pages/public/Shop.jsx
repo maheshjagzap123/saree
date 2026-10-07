@@ -3,7 +3,8 @@ import { useSearchParams } from 'react-router-dom'
 import Seo from '../../components/common/Seo'
 import Container from '../../components/ui/Container'
 import ProductGrid from '../../components/product/ProductGrid'
-import { products } from '../../data/products'
+import { listProducts } from '../../services/productService'
+import { useAsync } from '../../hooks/useAsync'
 
 const COLORS = ['Purple', 'Green', 'Red', 'Pink', 'Blue', 'Black', 'Orange', 'Multicolor']
 const FABRICS = ['Pure Silk', 'Silk', 'Semi Silk', 'Tissue']
@@ -52,6 +53,7 @@ export default function Shop() {
   const [bands, setBands] = useState([])
   const [sort, setSort] = useState('featured')
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const { data: products } = useAsync(() => listProducts(), [], [])
 
   // Seed price band from mega-menu query (?min=&max=).
   useEffect(() => {
@@ -69,7 +71,7 @@ export default function Shop() {
     setter((cur) => (cur.includes(val) ? cur.filter((x) => x !== val) : [...cur, val]))
 
   const filtered = useMemo(() => {
-    let list = products.filter((p) => p.status === 'published')
+    let list = (products || []).filter((p) => p.status === 'published')
     const filterQ = params.get('filter')
     if (filterQ === 'new') list = list.filter((p) => p.is_new)
     if (filterQ === 'bestseller') list = list.filter((p) => p.is_bestseller)
@@ -96,7 +98,7 @@ export default function Shop() {
       default:
         return [...list].sort((a, b) => Number(b.is_featured) - Number(a.is_featured))
     }
-  }, [colors, fabrics, borders, bands, sort, params])
+  }, [products, colors, fabrics, borders, bands, sort, params])
 
   const Filters = () => (
     <>

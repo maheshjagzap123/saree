@@ -3,11 +3,13 @@ import Container from '../../components/ui/Container'
 import Button from '../../components/ui/Button'
 import ProductGrid from '../../components/product/ProductGrid'
 import { useStore } from '../../context/StoreContext'
-import { products } from '../../data/products'
+import { listProducts } from '../../services/productService'
+import { useAsync } from '../../hooks/useAsync'
 
 export default function Wishlist() {
   const { wishlist } = useStore()
-  const items = products.filter((p) => wishlist.includes(p.id))
+  const { data: products } = useAsync(() => listProducts(), [], [])
+  const items = (products || []).filter((p) => wishlist.includes(p.id))
 
   return (
     <>

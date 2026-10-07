@@ -7,7 +7,8 @@ import Badge from '../../components/ui/Badge'
 import ProductGrid from '../../components/product/ProductGrid'
 import { StarIcon, HeartIcon } from '../../components/ui/icons'
 import { useStore } from '../../context/StoreContext'
-import { getProduct, products } from '../../data/products'
+import { getProduct, listProducts } from '../../services/productService'
+import { useAsync } from '../../hooks/useAsync'
 import { formatPrice, discountPercent } from '../../utils/format'
 
 const whatsappNumber = import.meta.env.VITE_WHATSAPP_NUMBER || '919999999999'
@@ -24,9 +25,19 @@ function Spec({ label, value }) {
 
 export default function Product() {
   const { slug } = useParams()
-  const product = getProduct(slug)
   const { addToCart, toggleWish, isWished } = useStore()
   const [activeImg, setActiveImg] = useState(0)
+
+  const { data: product, loading } = useAsync(() => getProduct(slug), [slug])
+  const { data: allProducts } = useAsync(() => listProducts(), [])
+
+  if (loading) {
+    return (
+      <Container className="py-24 text-center">
+        <p className="text-muted">Loading…</p>
+      </Container>
+    )
+  }
 
   if (!product) {
     return (
@@ -41,7 +52,7 @@ export default function Product() {
   const discount = discountPercent(product.price, product.compare_at_price)
   const inStock = product.stock_quantity > 0
   const wished = isWished(product.id)
-  const related = products
+  const related = (allProducts || [])
     .filter((p) => p.collection === product.collection && p.id !== product.id)
     .slice(0, 4)
 

@@ -1,5 +1,6 @@
 import { Routes, Route } from 'react-router-dom'
 import Layout from './components/layout/Layout'
+import ProtectedRoute from './components/common/ProtectedRoute'
 
 import Home from './pages/public/Home'
 import Shop from './pages/public/Shop'
@@ -11,18 +12,33 @@ import Contact from './pages/public/Contact'
 import Journal from './pages/public/Journal'
 import CartPage from './pages/public/CartPage'
 import Checkout from './pages/public/Checkout'
+import OrderSuccess from './pages/public/OrderSuccess'
 import Search from './pages/public/Search'
 import Store from './pages/public/Store'
 import Faq from './pages/public/Faq'
 import Policy from './pages/public/Policy'
 import NotFound from './pages/public/NotFound'
 
+import AuthPage from './pages/account/AuthPage'
 import Account from './pages/account/Account'
+import Orders from './pages/account/Orders'
+import OrderDetail from './pages/account/OrderDetail'
+import Addresses from './pages/account/Addresses'
+import Profile from './pages/account/Profile'
 import Wishlist from './pages/account/Wishlist'
+
+import AdminLayout from './pages/admin/AdminLayout'
+import Dashboard from './pages/admin/Dashboard'
+import AdminProducts from './pages/admin/AdminProducts'
+import ProductEditor from './pages/admin/ProductEditor'
+import AdminCollections from './pages/admin/AdminCollections'
+import AdminCategories from './pages/admin/AdminCategories'
+import AdminOrders from './pages/admin/AdminOrders'
 
 export default function App() {
   return (
     <Routes>
+      {/* Public + customer area share the storefront Layout */}
       <Route element={<Layout />}>
         <Route index element={<Home />} />
         <Route path="shop" element={<Shop />} />
@@ -41,12 +57,41 @@ export default function App() {
         <Route path="privacy" element={<Policy type="privacy" />} />
         <Route path="terms" element={<Policy type="terms" />} />
         <Route path="cart" element={<CartPage />} />
-        <Route path="checkout" element={<Checkout />} />
 
-        <Route path="account" element={<Account />} />
-        <Route path="account/wishlist" element={<Wishlist />} />
+        {/* Auth */}
+        <Route path="login" element={<AuthPage mode="login" />} />
+        <Route path="signup" element={<AuthPage mode="signup" />} />
+
+        {/* Checkout requires sign-in */}
+        <Route path="checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
+        <Route path="order-success" element={<ProtectedRoute><OrderSuccess /></ProtectedRoute>} />
+
+        {/* Customer account (protected) */}
+        <Route path="account" element={<ProtectedRoute><Account /></ProtectedRoute>} />
+        <Route path="account/orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
+        <Route path="account/orders/:id" element={<ProtectedRoute><OrderDetail /></ProtectedRoute>} />
+        <Route path="account/addresses" element={<ProtectedRoute><Addresses /></ProtectedRoute>} />
+        <Route path="account/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+        <Route path="account/wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
 
         <Route path="*" element={<NotFound />} />
+      </Route>
+
+      {/* Admin (protected, admin role, own layout) */}
+      <Route
+        path="/admin"
+        element={
+          <ProtectedRoute admin>
+            <AdminLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route index element={<Dashboard />} />
+        <Route path="products" element={<AdminProducts />} />
+        <Route path="products/:id" element={<ProductEditor />} />
+        <Route path="collections" element={<AdminCollections />} />
+        <Route path="categories" element={<AdminCategories />} />
+        <Route path="orders" element={<AdminOrders />} />
       </Route>
     </Routes>
   )

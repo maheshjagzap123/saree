@@ -3,7 +3,7 @@ import Container from '../../components/ui/Container'
 import SectionHeading from '../../components/ui/SectionHeading'
 import Button from '../../components/ui/Button'
 import { craftsmanshipSteps } from '../../data/content'
-import { craftImage } from '../../utils/sareeImage'
+import { IMG } from '../../assets/images'
 
 export default function About() {
   return (
@@ -15,7 +15,7 @@ export default function About() {
 
       <section className="relative h-[46vh] min-h-[340px] overflow-hidden">
         <img
-          src={craftImage({ seed: 'about-hero', w: 1600, h: 900, title: 'Woven by hand' })}
+          src={IMG.goldenAtelier}
           alt="Paithani weaving on a traditional loom"
           className="h-full w-full object-cover"
         />

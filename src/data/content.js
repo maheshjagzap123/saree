@@ -1,6 +1,6 @@
 // Mock editorial content (trust strip, craftsmanship steps, why-us, testimonials,
 // journal, occasions). Admin-managed later via a homepage CMS.
-import { sareeImage, craftImage } from '../utils/sareeImage'
+import { IMG } from '../assets/images'
 
 export const announcement = 'Complimentary shipping on orders above ₹10,000'
 
@@ -50,21 +50,21 @@ export const journal = [
     title: 'What Is a Paithani Saree?',
     excerpt: 'An introduction to the heritage, weave and character of the Paithani.',
     category: 'Paithani',
-    image: sareeImage({ color: 'Purple', seed: 'journal-1', w: 900, h: 560, label: 'The Art of Paithani' }),
+    image: IMG.ivoryZari,
   },
   {
     slug: 'single-muniya-vs-triple-muniya',
     title: 'Single Muniya vs Triple Muniya',
     excerpt: 'Understanding the difference between these two classic Paithani weaves.',
     category: 'Weaves',
-    image: sareeImage({ color: 'Green', seed: 'journal-2', w: 900, h: 560, label: 'Muniya Weaves' }),
+    image: IMG.emeraldGoldBrocade,
   },
   {
     slug: 'how-to-care-for-paithani-saree',
     title: 'How to Care for a Silk Paithani',
     excerpt: 'Simple ways to store, protect and preserve your silk saree for years.',
     category: 'Care',
-    image: sareeImage({ color: 'Pink', seed: 'journal-3', w: 900, h: 560, label: 'Caring for Silk' }),
+    image: IMG.ivoryBrocade,
   },
 ]
 
@@ -116,8 +116,8 @@ export const hero = {
   copy: 'Paithani sarees shaped by colour, craft and generations of Indian textile tradition.',
   primaryCta: { label: 'Explore the Edit', to: '/shop' },
   secondaryCta: { label: 'Discover the Craft', to: '/about' },
-  desktopImage: sareeImage({ color: 'Purple', seed: 'hero', w: 1600, h: 1000, label: 'Handwoven Paithani' }),
-  mobileImage: sareeImage({ color: 'Purple', seed: 'hero', w: 900, h: 1100, label: 'Handwoven Paithani' }),
+  desktopImage: IMG.luxuriousDisplay,
+  mobileImage: IMG.luxuriousDisplay,
 }
 
 // Section 03 — Find Your Paithani (discovery paths)
@@ -127,35 +127,35 @@ export const discoveryPaths = [
     title: 'The Bride',
     description: 'For wedding and bridal moments.',
     to: '/collections/bridal-paithani',
-    image: sareeImage({ color: 'Red', seed: 'path-bride', w: 1000, h: 1200, label: 'The Bride' }),
+    image: IMG.bridalElegance,
   },
   {
     key: 'celebration',
     title: 'The Celebration',
     description: 'For festivals and special occasions.',
     to: '/collections/festive-paithani',
-    image: sareeImage({ color: 'Orange', seed: 'path-celebration', w: 1000, h: 900, label: 'The Celebration' }),
+    image: IMG.goldenCourtyard,
   },
   {
     key: 'classic',
     title: 'The Classic',
     description: 'Traditional Paithani character.',
     to: '/collections/traditional-paithani',
-    image: sareeImage({ color: 'Purple', seed: 'path-classic', w: 1000, h: 900, label: 'The Classic' }),
+    image: IMG.purpleBrocade,
   },
   {
     key: 'statement',
     title: 'The Statement',
     description: 'Bold colours and dramatic motifs.',
     to: '/collections/designer-paithani',
-    image: sareeImage({ color: 'Blue', seed: 'path-statement', w: 1000, h: 900, label: 'The Statement' }),
+    image: IMG.tealZariPallu,
   },
   {
     key: 'gift',
     title: 'The Gift',
     description: 'Curated choices for meaningful occasions.',
     to: '/shop',
-    image: sareeImage({ color: 'Gold', seed: 'path-gift', w: 1000, h: 900, label: 'The Gift' }),
+    image: IMG.purpleGiftSet,
   },
 ]
 
@@ -183,19 +183,19 @@ export const colourStory = [
 
 // Section 07 — The Atelier (craft journey)
 export const atelierSteps = [
-  { no: '01', title: 'Silk', text: 'The journey begins with fine silk yarn, chosen for lustre and strength.', image: craftImage({ seed: 'silk', title: 'Silk' }) },
-  { no: '02', title: 'Colour', text: 'Yarn is dyed in deep, traditional palettes.', image: craftImage({ seed: 'colour', title: 'Colour' }) },
-  { no: '03', title: 'Motif', text: 'Peacocks, muniya and vines are mapped onto the loom.', image: craftImage({ seed: 'motif', title: 'Motif' }) },
-  { no: '04', title: 'Loom', text: 'The warp is dressed and the handloom prepared.', image: craftImage({ seed: 'loom', title: 'Loom' }) },
-  { no: '05', title: 'Weave', text: 'The border and pallu are woven thread by thread.', image: craftImage({ seed: 'weave', title: 'Weave' }) },
-  { no: '06', title: 'Finish', text: 'Each saree is checked, finished and readied for its new home.', image: craftImage({ seed: 'finish', title: 'Finish' }) },
+  { no: '01', title: 'Silk', text: 'The journey begins with fine silk yarn, chosen for lustre and strength.', image: IMG.goldenAtelier },
+  { no: '02', title: 'Colour', text: 'Yarn is dyed in deep, traditional palettes.', image: IMG.emeraldSilkPeacock },
+  { no: '03', title: 'Motif', text: 'Peacocks, muniya and vines are mapped onto the loom.', image: IMG.purplePeacockZari1 },
+  { no: '04', title: 'Loom', text: 'The warp is dressed and the handloom prepared.', image: IMG.goldenAtelier },
+  { no: '05', title: 'Weave', text: 'The border and pallu are woven thread by thread.', image: IMG.emeraldGoldBrocade },
+  { no: '06', title: 'Finish', text: 'Each saree is checked, finished and readied for its new home.', image: IMG.luxuriousDisplay },
 ]
 
 // Section 12 — Final brand statement
 export const brandStatement = {
   lines: ['Not just a saree.', 'A piece of memory,', 'woven to last.'],
   cta: { label: 'Explore the Collection', to: '/shop' },
-  image: sareeImage({ color: 'Multicolor', seed: 'statement', w: 1600, h: 1000 }),
+  image: IMG.peacockCollection,
 }
 
 // Section 11 — Personal assistance

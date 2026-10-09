@@ -1,8 +1,16 @@
 // Mock collections. Replace with Supabase `collections` table reads later.
 
 import { sareeImage } from '../utils/sareeImage'
+import { IMG } from '../assets/images'
 
-// Theme colour per collection for the generated cover illustration.
+// Real cover photo per collection (falls back to a generated illustration if missing).
+const COLLECTION_IMAGE = {
+  'traditional-paithani': IMG.purpleBanarasi,
+  'bridal-paithani': IMG.bridalCollection,
+  'silk-paithani': IMG.emeraldDisplay1,
+  'designer-paithani': IMG.peacockCollection,
+  'festive-paithani': IMG.festiveHeritage,
+}
 const COLLECTION_COLOR = {
   'traditional-paithani': 'Purple',
   'bridal-paithani': 'Red',
@@ -54,10 +62,12 @@ const rawCollections = [
   },
 ]
 
-// Replace the cover image with a colour-themed saree illustration per collection.
+// Apply the real cover photo per collection; fall back to a generated illustration.
 export const collections = rawCollections.map((c) => ({
   ...c,
-  image: sareeImage({ color: COLLECTION_COLOR[c.slug] || 'Multicolor', seed: c.slug, w: 1200, h: 900, label: c.name }),
+  image:
+    COLLECTION_IMAGE[c.slug] ||
+    sareeImage({ color: COLLECTION_COLOR[c.slug] || 'Multicolor', seed: c.slug, w: 1200, h: 900, label: c.name }),
 }))
 
 export function getCollection(slug) {

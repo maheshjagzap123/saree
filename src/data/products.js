@@ -2,9 +2,23 @@
 // Field names mirror the planned products table (see docs/03-database-and-supabase.md).
 
 import { sareeImage } from '../utils/sareeImage'
+import { IMG } from '../assets/images'
 
-// Legacy helper kept so existing image arrays stay valid; the real images are generated
-// per-product below (colour-aware saree illustrations) via withSareeImages().
+// Real product photos keyed by slug (front + detail). Falls back to a generated saree
+// illustration if a slug has no mapping.
+const PRODUCT_IMAGES = {
+  'royal-purple-single-muniya-paithani': [IMG.purplePeacockZari, IMG.purpleZariPallu2],
+  'emerald-green-peacock-paithani': [IMG.emeraldGreenPeacock, IMG.emeraldSilkPeacock],
+  'classic-red-bridal-paithani': [IMG.redGold, IMG.redBanarasi],
+  'rani-pink-muniya-border-paithani': [IMG.magentaPeacockZari, IMG.magentaParrotBrocade],
+  'peacock-blue-designer-paithani': [IMG.peacockBlueDisplay, IMG.tealGoldenPeacocks],
+  'black-gold-tissue-paithani': [IMG.blackZariPallu, IMG.blackBrocade],
+  'marigold-orange-festive-paithani': [IMG.orangePeacockZari, IMG.orangeBrocade],
+  'wine-signature-bridal-paithani': [IMG.burgundyPeacock, IMG.maroonZariPallu],
+}
+
+// Legacy no-op helper kept so the raw image arrays below stay valid; real images are
+// applied by slug in the post-processing map at the end of this file.
 const img = (id) => `vp-${id}`
 
 const rawProducts = [
@@ -235,10 +249,10 @@ const rawProducts = [
   },
 ]
 
-// Generate colour-aware saree illustrations per product (front + a pallu-detail variant).
+// Apply real product photos by slug; fall back to a generated saree illustration.
 export const products = rawProducts.map((p) => ({
   ...p,
-  images: [
+  images: PRODUCT_IMAGES[p.slug] || [
     sareeImage({ color: p.color, seed: `${p.slug}-a`, label: p.weave_type }),
     sareeImage({ color: p.color, seed: `${p.slug}-b`, label: p.border_type }),
   ],

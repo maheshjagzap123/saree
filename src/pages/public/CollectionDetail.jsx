@@ -3,6 +3,7 @@ import Seo, { SITE_URL } from '../../components/common/Seo'
 import Container from '../../components/ui/Container'
 import Button from '../../components/ui/Button'
 import ProductGrid from '../../components/product/ProductGrid'
+import Img from '../../components/ui/Img'
 import { getCollection, getProductsByCollection } from '../../services/productService'
 import { useAsync } from '../../hooks/useAsync'
 
@@ -50,7 +51,7 @@ export default function CollectionDetail() {
 
       {/* Hero */}
       <section className="relative h-[42vh] min-h-[320px] overflow-hidden">
-        <img src={collection.image} alt={collection.name} className="h-full w-full object-cover" />
+        <Img src={collection.image} alt={collection.name} className="h-full w-full object-cover" />
         <div className="absolute inset-0 bg-charcoal/45" />
         <div className="absolute inset-0 flex items-center justify-center text-center text-ivory">
           <div className="animate-fade-up px-6">

@@ -49,24 +49,21 @@ export const journal = [
     title: 'What Is a Paithani Saree?',
     excerpt: 'An introduction to the heritage, weave and character of the Paithani.',
     category: 'Paithani',
-    image:
-      'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=900&q=70',
+    image: 'https://picsum.photos/seed/vp-journal-1/900/560',
   },
   {
     slug: 'single-muniya-vs-triple-muniya',
     title: 'Single Muniya vs Triple Muniya',
     excerpt: 'Understanding the difference between these two classic Paithani weaves.',
     category: 'Weaves',
-    image:
-      'https://images.unsplash.com/photo-1595341888016-a392ef81b7de?auto=format&fit=crop&w=900&q=70',
+    image: 'https://picsum.photos/seed/vp-journal-2/900/560',
   },
   {
     slug: 'how-to-care-for-paithani-saree',
     title: 'How to Care for a Silk Paithani',
     excerpt: 'Simple ways to store, protect and preserve your silk saree for years.',
     category: 'Care',
-    image:
-      'https://images.unsplash.com/photo-1600093463592-8e36ae95ef56?auto=format&fit=crop&w=900&q=70',
+    image: 'https://picsum.photos/seed/vp-journal-3/900/560',
   },
 ]
 
@@ -118,10 +115,8 @@ export const hero = {
   copy: 'Paithani sarees shaped by colour, craft and generations of Indian textile tradition.',
   primaryCta: { label: 'Explore the Edit', to: '/shop' },
   secondaryCta: { label: 'Discover the Craft', to: '/about' },
-  desktopImage:
-    'https://images.unsplash.com/photo-1583391733956-6c78276477e2?auto=format&fit=crop&w=2000&q=80',
-  mobileImage:
-    'https://images.unsplash.com/photo-1583391733956-6c78276477e2?auto=format&fit=crop&w=900&q=80',
+  desktopImage: 'https://picsum.photos/seed/vp-hero/2000/1100',
+  mobileImage: 'https://picsum.photos/seed/vp-hero/900/1100',
 }
 
 // Section 03 — Find Your Paithani (discovery paths)
@@ -131,35 +126,35 @@ export const discoveryPaths = [
     title: 'The Bride',
     description: 'For wedding and bridal moments.',
     to: '/collections/bridal-paithani',
-    image: 'https://images.unsplash.com/photo-1583391733956-6c78276477e2?auto=format&fit=crop&w=1000&q=75',
+    image: 'https://picsum.photos/seed/vp-path-bride/1000/1200',
   },
   {
     key: 'celebration',
     title: 'The Celebration',
     description: 'For festivals and special occasions.',
     to: '/collections/festive-paithani',
-    image: 'https://images.unsplash.com/photo-1600093463592-8e36ae95ef56?auto=format&fit=crop&w=1000&q=75',
+    image: 'https://picsum.photos/seed/vp-path-celebration/1000/900',
   },
   {
     key: 'classic',
     title: 'The Classic',
     description: 'Traditional Paithani character.',
     to: '/collections/traditional-paithani',
-    image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1000&q=75',
+    image: 'https://picsum.photos/seed/vp-path-classic/1000/900',
   },
   {
     key: 'statement',
     title: 'The Statement',
     description: 'Bold colours and dramatic motifs.',
     to: '/collections/designer-paithani',
-    image: 'https://images.unsplash.com/photo-1617059062018-6b7c5e2b9b9c?auto=format&fit=crop&w=1000&q=75',
+    image: 'https://picsum.photos/seed/vp-path-statement/1000/900',
   },
   {
     key: 'gift',
     title: 'The Gift',
     description: 'Curated choices for meaningful occasions.',
     to: '/shop',
-    image: 'https://images.unsplash.com/photo-1595341888016-a392ef81b7de?auto=format&fit=crop&w=1000&q=75',
+    image: 'https://picsum.photos/seed/vp-path-gift/1000/900',
   },
 ]
 
@@ -187,19 +182,19 @@ export const colourStory = [
 
 // Section 07 — The Atelier (craft journey)
 export const atelierSteps = [
-  { no: '01', title: 'Silk', text: 'The journey begins with fine silk yarn, chosen for lustre and strength.', image: 'https://images.unsplash.com/photo-1605518216938-7c31b7b14ad0?auto=format&fit=crop&w=1200&q=75' },
-  { no: '02', title: 'Colour', text: 'Yarn is dyed in deep, traditional palettes.', image: 'https://images.unsplash.com/photo-1559715745-e1b33a271c8f?auto=format&fit=crop&w=1200&q=75' },
-  { no: '03', title: 'Motif', text: 'Peacocks, muniya and vines are mapped onto the loom.', image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1200&q=75' },
-  { no: '04', title: 'Loom', text: 'The warp is dressed and the handloom prepared.', image: 'https://images.unsplash.com/photo-1591130901961-3564a2c0a3f6?auto=format&fit=crop&w=1200&q=75' },
-  { no: '05', title: 'Weave', text: 'The border and pallu are woven thread by thread.', image: 'https://images.unsplash.com/photo-1595341888016-a392ef81b7de?auto=format&fit=crop&w=1200&q=75' },
-  { no: '06', title: 'Finish', text: 'Each saree is checked, finished and readied for its new home.', image: 'https://images.unsplash.com/photo-1600093463592-8e36ae95ef56?auto=format&fit=crop&w=1200&q=75' },
+  { no: '01', title: 'Silk', text: 'The journey begins with fine silk yarn, chosen for lustre and strength.', image: 'https://picsum.photos/seed/vp-atelier-1/1200/900' },
+  { no: '02', title: 'Colour', text: 'Yarn is dyed in deep, traditional palettes.', image: 'https://picsum.photos/seed/vp-atelier-2/1200/900' },
+  { no: '03', title: 'Motif', text: 'Peacocks, muniya and vines are mapped onto the loom.', image: 'https://picsum.photos/seed/vp-atelier-3/1200/900' },
+  { no: '04', title: 'Loom', text: 'The warp is dressed and the handloom prepared.', image: 'https://picsum.photos/seed/vp-atelier-4/1200/900' },
+  { no: '05', title: 'Weave', text: 'The border and pallu are woven thread by thread.', image: 'https://picsum.photos/seed/vp-atelier-5/1200/900' },
+  { no: '06', title: 'Finish', text: 'Each saree is checked, finished and readied for its new home.', image: 'https://picsum.photos/seed/vp-atelier-6/1200/900' },
 ]
 
 // Section 12 — Final brand statement
 export const brandStatement = {
   lines: ['Not just a saree.', 'A piece of memory,', 'woven to last.'],
   cta: { label: 'Explore the Collection', to: '/shop' },
-  image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=2000&q=80',
+  image: 'https://picsum.photos/seed/vp-statement/2000/1100',
 }
 
 // Section 11 — Personal assistance

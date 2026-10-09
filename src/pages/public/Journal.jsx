@@ -1,6 +1,7 @@
 import Seo from '../../components/common/Seo'
 import Container from '../../components/ui/Container'
 import SectionHeading from '../../components/ui/SectionHeading'
+import Img from '../../components/ui/Img'
 import { journal } from '../../data/content'
 
 export default function Journal() {
@@ -28,7 +29,7 @@ export default function Journal() {
             <article key={a.slug} className="group">
               {/* Article pages are planned; links kept for structure. */}
               <div className="aspect-[16/10] overflow-hidden bg-cream">
-                <img
+                <Img
                   src={a.image}
                   alt={a.title}
                   className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"

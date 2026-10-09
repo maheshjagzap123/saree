@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import Seo from '../../components/common/Seo'
 import Container from '../../components/ui/Container'
 import SectionHeading from '../../components/ui/SectionHeading'
+import Img from '../../components/ui/Img'
 import { listCollections } from '../../services/productService'
 import { useAsync } from '../../hooks/useAsync'
 
@@ -31,7 +32,7 @@ export default function Collections() {
           {collections.map((c) => (
             <Link key={c.slug} to={`/collections/${c.slug}`} className="group block">
               <div className="aspect-[4/5] overflow-hidden bg-cream">
-                <img
+                <Img
                   src={c.image}
                   alt={c.name}
                   className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"

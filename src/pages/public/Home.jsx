@@ -4,6 +4,7 @@ import Container from '../../components/ui/Container'
 import Button from '../../components/ui/Button'
 import ProductCard from '../../components/product/ProductCard'
 import Reveal from '../../components/common/Reveal'
+import Img from '../../components/ui/Img'
 import { listProducts, listCollections } from '../../services/productService'
 import { useAsync } from '../../hooks/useAsync'
 import { formatPrice } from '../../utils/format'
@@ -45,15 +46,13 @@ export default function Home() {
 
       {/* 01 — CINEMATIC HERO */}
       <section className="relative h-[88vh] min-h-[560px] w-full overflow-hidden">
-        <picture>
-          <source media="(max-width: 640px)" srcSet={hero.mobileImage} />
-          <img
-            src={hero.desktopImage}
-            alt="A handcrafted Paithani saree with an ornate zari pallu"
-            className="h-full w-full object-cover"
-            fetchpriority="high"
-          />
-        </picture>
+        <Img
+          src={hero.desktopImage}
+          alt="A handcrafted Paithani saree with an ornate zari pallu"
+          className="h-full w-full object-cover"
+          loading="eager"
+          fetchpriority="high"
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-charcoal/75 via-charcoal/25 to-charcoal/10" />
         <div className="absolute inset-0 flex items-center">
           <Container>
@@ -98,7 +97,7 @@ export default function Home() {
               </Reveal>
               <Reveal className="order-1 lg:order-2">
                 <div className="aspect-[4/5] overflow-hidden bg-cream">
-                  <img src={signature.images[0]} alt={signature.name} className="h-full w-full object-cover" loading="lazy" />
+                  <Img src={signature.images[0]} alt={signature.name} className="h-full w-full object-cover" />
                 </div>
               </Reveal>
             </div>
@@ -123,7 +122,7 @@ export default function Home() {
               <Reveal key={d.key} delay={i * 60} className={i === 0 ? 'sm:col-span-2 lg:col-span-1 lg:row-span-2' : ''}>
                 <Link to={d.to} className="group relative block h-full overflow-hidden">
                   <div className={`${i === 0 ? 'aspect-[3/4] lg:h-full' : 'aspect-[4/3]'} overflow-hidden bg-beige`}>
-                    <img src={d.image} alt={d.title} className="h-full w-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-105" loading="lazy" />
+                    <Img src={d.image} alt={d.title} className="h-full w-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-105" />
                   </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-charcoal/70 via-charcoal/10 to-transparent" />
                   <div className="absolute bottom-0 left-0 p-7 text-ivory">
@@ -224,7 +223,7 @@ export default function Home() {
             {atelierSteps.map((s, i) => (
               <Reveal key={s.no} delay={i * 70}>
                 <div className="aspect-[4/3] overflow-hidden bg-charcoal/40">
-                  <img src={s.image} alt={s.title} className="h-full w-full object-cover opacity-90 transition-transform duration-[1200ms] hover:scale-105" loading="lazy" />
+                  <Img src={s.image} alt={s.title} className="h-full w-full object-cover opacity-90 transition-transform duration-[1200ms] hover:scale-105" />
                 </div>
                 <div className="mt-4 flex items-baseline gap-3">
                   <span className="font-serif text-2xl text-gold-soft">{s.no}</span>
@@ -246,7 +245,7 @@ export default function Home() {
           <Container>
             <div className="grid items-stretch gap-0 overflow-hidden border border-beige lg:grid-cols-2">
               <div className="aspect-[4/5] overflow-hidden bg-cream lg:aspect-auto">
-                <img src={storyProduct.images[0]} alt={storyProduct.name} className="h-full w-full object-cover" loading="lazy" />
+                <Img src={storyProduct.images[0]} alt={storyProduct.name} className="h-full w-full object-cover" />
               </div>
               <Reveal className="flex flex-col justify-center bg-ivory p-10 lg:p-16">
                 <span className="eyebrow">Saree Stories</span>
@@ -296,7 +295,7 @@ export default function Home() {
               <Reveal key={a.slug} delay={i * 70}>
                 <Link to="/journal" className="group block">
                   <div className="aspect-[16/11] overflow-hidden bg-cream">
-                    <img src={a.image} alt={a.title} className="h-full w-full object-cover transition-transform duration-[1200ms] group-hover:scale-105" loading="lazy" />
+                    <Img src={a.image} alt={a.title} className="h-full w-full object-cover transition-transform duration-[1200ms] group-hover:scale-105" />
                   </div>
                   <span className="mt-4 block text-xs uppercase tracking-wider2 text-gold">{a.category}</span>
                   <h3 className="mt-1 font-serif text-xl font-light group-hover:text-wine">{a.title}</h3>
@@ -336,7 +335,7 @@ export default function Home() {
 
       {/* 12 — FINAL BRAND STATEMENT */}
       <section className="relative flex min-h-[70vh] items-center overflow-hidden">
-        <img src={brandStatement.image} alt="" aria-hidden className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
+        <Img src={brandStatement.image} alt="" aria-hidden="true" className="absolute inset-0 h-full w-full object-cover" />
         <div className="absolute inset-0 bg-charcoal/65" />
         <Container>
           <Reveal className="relative max-w-2xl text-ivory">

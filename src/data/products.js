@@ -1,8 +1,8 @@
 // Mock product catalog. Replace with Supabase `products` + `product_images` reads later.
 // Field names mirror the planned products table (see docs/03-database-and-supabase.md).
 
-const img = (id) =>
-  `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=900&q=70`
+// Deterministic demo images via picsum (reliable). `id` is reused as a stable seed.
+const img = (id) => `https://picsum.photos/seed/vp-${id}/900/1200`
 
 export const products = [
   {

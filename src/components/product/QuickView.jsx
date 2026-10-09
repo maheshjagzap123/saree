@@ -3,6 +3,7 @@ import { useStore } from '../../context/StoreContext'
 import { formatPrice, discountPercent } from '../../utils/format'
 import Button from '../ui/Button'
 import Badge from '../ui/Badge'
+import Img from '../ui/Img'
 import { CloseIcon } from '../ui/icons'
 
 export default function QuickView() {
@@ -30,7 +31,7 @@ export default function QuickView() {
         </button>
 
         <div className="aspect-[4/5] bg-cream sm:aspect-auto">
-          <img src={product.images[0]} alt={product.name} className="h-full w-full object-cover" />
+          <Img src={product.images[0]} alt={product.name} className="h-full w-full object-cover" />
         </div>
 
         <div className="flex flex-col p-7">

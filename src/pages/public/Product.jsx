@@ -5,6 +5,7 @@ import Container from '../../components/ui/Container'
 import Button from '../../components/ui/Button'
 import ProductGrid from '../../components/product/ProductGrid'
 import Reveal from '../../components/common/Reveal'
+import Img from '../../components/ui/Img'
 import { HeartIcon } from '../../components/ui/icons'
 import { useStore } from '../../context/StoreContext'
 import { getProduct, listProducts } from '../../services/productService'
@@ -120,12 +121,12 @@ export default function Product() {
                   className={`h-20 w-16 overflow-hidden border ${activeImg === i ? 'border-wine' : 'border-beige'}`}
                   aria-label={`View image ${i + 1}`}
                 >
-                  <img src={src} alt="" className="h-full w-full object-cover" loading="lazy" />
+                  <Img src={src} alt="" className="h-full w-full object-cover" />
                 </button>
               ))}
             </div>
             <div className="flex-1 overflow-hidden bg-cream">
-              <img src={product.images[activeImg]} alt={product.name} className="aspect-[4/5] h-full w-full object-cover" />
+              <Img src={product.images[activeImg]} alt={product.name} className="aspect-[4/5] h-full w-full object-cover" />
             </div>
           </div>
 

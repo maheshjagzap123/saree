@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { useStore } from '../../context/StoreContext'
 import { formatPrice } from '../../utils/format'
 import { HeartIcon } from '../ui/icons'
+import Img from '../ui/Img'
 
 // Minimal luxury fashion card: image, small category, name, short descriptor, price,
 // wishlist. "View Saree →" appears on hover (desktop) and is always usable via the card
@@ -18,19 +19,17 @@ export default function ProductCard({ product }) {
     <div className="group relative flex flex-col">
       <div className="relative aspect-[3/4] overflow-hidden bg-cream">
         <Link to={`/products/${product.slug}`} aria-label={product.name}>
-          <img
+          <Img
             src={product.images[0]}
             alt={product.name}
             className="h-full w-full object-cover transition-transform duration-[1100ms] ease-out group-hover:scale-[1.04]"
-            loading="lazy"
           />
           {product.images[1] && (
-            <img
+            <Img
               src={product.images[1]}
               alt=""
-              aria-hidden
+              aria-hidden="true"
               className="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-700 group-hover:opacity-100"
-              loading="lazy"
             />
           )}
         </Link>

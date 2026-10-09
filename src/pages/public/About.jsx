@@ -14,7 +14,7 @@ export default function About() {
 
       <section className="relative h-[46vh] min-h-[340px] overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1600&q=75"
+          src="https://picsum.photos/seed/vp-about-hero/1600/900"
           alt="Paithani weaving on a traditional loom"
           className="h-full w-full object-cover"
         />

@@ -54,7 +54,7 @@ function mapProduct(row) {
     is_featured: row.is_featured,
     is_bestseller: row.is_bestseller,
     is_new: row.is_new,
-    images: images.length ? images : ['https://via.placeholder.com/900x1200?text=Saree'],
+    images: images.length ? images : [`https://picsum.photos/seed/vp-${row.slug || row.id}/900/1200`],
   }
 }
 

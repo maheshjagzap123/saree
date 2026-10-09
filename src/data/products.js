@@ -1,10 +1,13 @@
 // Mock product catalog. Replace with Supabase `products` + `product_images` reads later.
 // Field names mirror the planned products table (see docs/03-database-and-supabase.md).
 
-// Deterministic demo images via picsum (reliable). `id` is reused as a stable seed.
-const img = (id) => `https://picsum.photos/seed/vp-${id}/900/1200`
+import { sareeImage } from '../utils/sareeImage'
 
-export const products = [
+// Legacy helper kept so existing image arrays stay valid; the real images are generated
+// per-product below (colour-aware saree illustrations) via withSareeImages().
+const img = (id) => `vp-${id}`
+
+const rawProducts = [
   {
     id: 'vp-1001',
     name: 'Royal Purple Single Muniya Paithani',
@@ -231,6 +234,15 @@ export const products = [
     images: [img('1583391733956-6c78276477e2'), img('1595341888016-a392ef81b7de')],
   },
 ]
+
+// Generate colour-aware saree illustrations per product (front + a pallu-detail variant).
+export const products = rawProducts.map((p) => ({
+  ...p,
+  images: [
+    sareeImage({ color: p.color, seed: `${p.slug}-a`, label: p.weave_type }),
+    sareeImage({ color: p.color, seed: `${p.slug}-b`, label: p.border_type }),
+  ],
+}))
 
 export function getProduct(slug) {
   return products.find((p) => p.slug === slug)

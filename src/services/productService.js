@@ -15,6 +15,7 @@ import {
   collections as mockCollections,
   getCollection as mockGetCollection,
 } from '../data/collections'
+import { sareeImage } from '../utils/sareeImage'
 
 // Map a Supabase product row (+ joined images/collection) to the UI product shape.
 function mapProduct(row) {
@@ -54,7 +55,7 @@ function mapProduct(row) {
     is_featured: row.is_featured,
     is_bestseller: row.is_bestseller,
     is_new: row.is_new,
-    images: images.length ? images : [`https://picsum.photos/seed/vp-${row.slug || row.id}/900/1200`],
+    images: images.length ? images : [sareeImage({ color: row.color, seed: row.slug || row.id, label: row.weave_type })],
   }
 }
 

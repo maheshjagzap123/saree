@@ -1,12 +1,15 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Seo from '../../components/common/Seo'
 import Container from '../../components/ui/Container'
 import Button from '../../components/ui/Button'
 import { useStore } from '../../context/StoreContext'
 import { useAuth } from '../../context/AuthContext'
-import { createOrder } from '../../services/orderService'
+import { createOrder, saveAddress } from '../../services/orderService'
 import { formatPrice } from '../../utils/format'
+import PhoneField from '../../components/ui/PhoneField'
+import { isValidPhone, isValidEmail, isValidPin, sanitizePin, sanitizePhone } from '../../utils/validation'
+import { useGeolocation } from '../../hooks/useGeolocation'
 
 const input = 'w-full border border-beige bg-ivory px-4 py-3 text-sm focus:border-wine'
 
@@ -21,19 +24,49 @@ export default function Checkout() {
   const [step, setStep] = useState('details')
   const [placing, setPlacing] = useState(false)
   const [error, setError] = useState('')
+  const [saveToAccount, setSaveToAccount] = useState(true)
+  const geo = useGeolocation()
   const [form, setForm] = useState({
     full_name: displayName !== 'there' ? displayName : '',
     phone: '',
+    email: user?.email || '',
     line1: '',
     line2: '',
     city: '',
     state: '',
     postal_code: '',
+    latitude: null,
+    longitude: null,
     contact_method: 'WhatsApp',
     notes: '',
   })
 
   const set = (k) => (e) => setForm((a) => ({ ...a, [k]: e.target.value }))
+
+  // Store captured coordinates on the form.
+  useEffect(() => {
+    if (geo.coords) {
+      setForm((a) => ({ ...a, latitude: geo.coords.latitude, longitude: geo.coords.longitude }))
+    }
+  }, [geo.coords])
+
+  function submitDetails(e) {
+    e.preventDefault()
+    setError('')
+    if (!isValidPhone(form.phone)) {
+      setError('Enter a valid 10-digit mobile number (starting 6–9).')
+      return
+    }
+    if (form.email && !isValidEmail(form.email)) {
+      setError('Enter a valid email address (e.g. name@example.com).')
+      return
+    }
+    if (!isValidPin(form.postal_code)) {
+      setError('Enter a valid 6-digit PIN code.')
+      return
+    }
+    setStep('review')
+  }
 
   if (cart.length === 0) {
     return (
@@ -48,13 +81,36 @@ export default function Checkout() {
     setError('')
     setPlacing(true)
     try {
+      // Normalise the phone with the +91 prefix for records.
+      const address = { ...form, phone: `+91 ${sanitizePhone(form.phone)}` }
+
       const order = await createOrder({
         userId: user.id,
         items: cart,
-        address: form, // includes contact_method + notes in the jsonb
+        address, // includes contact_method + notes in the jsonb
         subtotal: cartSubtotal,
         shipping: 0,
       })
+
+      // Also save the address to the customer's address book (best-effort).
+      if (saveToAccount) {
+        try {
+          await saveAddress(user.id, {
+            full_name: form.full_name,
+            phone: `+91 ${sanitizePhone(form.phone)}`,
+            line1: form.line1,
+            line2: form.line2,
+            city: form.city,
+            state: form.state,
+            postal_code: form.postal_code,
+            latitude: form.latitude,
+            longitude: form.longitude,
+          })
+        } catch {
+          /* don't block the order if saving the address fails */
+        }
+      }
+
       clearCart()
       navigate('/order-success', { state: { order } })
     } catch (e) {
@@ -87,14 +143,15 @@ export default function Checkout() {
         <div className="mt-10 grid gap-12 lg:grid-cols-[1fr_340px]">
           <div>
             {step === 'details' && (
-              <form onSubmit={(e) => { e.preventDefault(); setStep('review') }} className="grid gap-4 sm:grid-cols-2">
+              <form onSubmit={submitDetails} className="grid gap-4 sm:grid-cols-2">
                 <input className={input} placeholder="Full name" value={form.full_name} onChange={set('full_name')} required />
-                <input className={input} placeholder="Phone" value={form.phone} onChange={set('phone')} required />
+                <PhoneField value={form.phone} onChange={(v) => setForm((a) => ({ ...a, phone: v }))} />
+                <input className={`${input} sm:col-span-2`} type="email" placeholder="Email (e.g. name@example.com)" value={form.email} onChange={set('email')} />
                 <input className={`${input} sm:col-span-2`} placeholder="Address line 1" value={form.line1} onChange={set('line1')} required />
                 <input className={`${input} sm:col-span-2`} placeholder="Address line 2 (optional)" value={form.line2} onChange={set('line2')} />
                 <input className={input} placeholder="City" value={form.city} onChange={set('city')} required />
                 <input className={input} placeholder="State" value={form.state} onChange={set('state')} required />
-                <input className={input} placeholder="PIN code" value={form.postal_code} onChange={set('postal_code')} required />
+                <input className={input} placeholder="PIN code" inputMode="numeric" value={form.postal_code} onChange={(e) => setForm((a) => ({ ...a, postal_code: sanitizePin(e.target.value) }))} required />
                 <label className="block">
                   <span className="eyebrow mb-1 block">Preferred contact</span>
                   <select className={input} value={form.contact_method} onChange={set('contact_method')}>
@@ -104,6 +161,29 @@ export default function Checkout() {
                   </select>
                 </label>
                 <textarea className={`${input} sm:col-span-2`} rows={3} placeholder="Order notes (optional) — blouse stitching, delivery timing, questions…" value={form.notes} onChange={set('notes')} />
+
+                {/* Current location */}
+                <div className="flex flex-wrap items-center gap-3 sm:col-span-2">
+                  <button
+                    type="button"
+                    onClick={geo.capture}
+                    className="border border-charcoal/40 px-4 py-2 text-sm hover:border-wine hover:text-wine"
+                  >
+                    {geo.status === 'loading' ? 'Getting location…' : 'Use my current location'}
+                  </button>
+                  {form.latitude != null && (
+                    <span className="text-xs text-green-700">
+                      Location saved ({form.latitude.toFixed(4)}, {form.longitude.toFixed(4)})
+                    </span>
+                  )}
+                  {geo.status === 'error' && <span className="text-xs text-wine">{geo.error}</span>}
+                </div>
+
+                <label className="flex items-center gap-2 text-sm sm:col-span-2">
+                  <input type="checkbox" checked={saveToAccount} onChange={(e) => setSaveToAccount(e.target.checked)} className="accent-wine" />
+                  Save this address to my account
+                </label>
+                {error && <p className="sm:col-span-2 border border-wine/30 bg-wine/5 p-3 text-sm text-wine">{error}</p>}
                 <div className="sm:col-span-2">
                   <Button type="submit" disabled={!detailsValid}>Continue to Review</Button>
                 </div>
@@ -118,7 +198,8 @@ export default function Checkout() {
                   <p className="text-muted">
                     {form.line1}{form.line2 ? `, ${form.line2}` : ''}, {form.city}, {form.state} {form.postal_code}
                   </p>
-                  <p className="text-muted">{form.phone}</p>
+                  <p className="text-muted">+91 {form.phone}</p>
+                  {form.email && <p className="text-muted">{form.email}</p>}
                   <p className="mt-2 text-muted">Preferred contact: {form.contact_method}</p>
                   {form.notes && <p className="mt-2 text-muted">Notes: {form.notes}</p>}
                 </div>

@@ -4,6 +4,9 @@
   "version": "0.1.0",
   "type": "module",
   "description": "Vastraa Paithani — premium single-brand Paithani saree e-commerce (React + Vite + Tailwind, Supabase planned).",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",

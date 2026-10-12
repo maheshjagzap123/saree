@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom'
 import Seo from '../../components/common/Seo'
 import Container from '../../components/ui/Container'
 import ProductGrid from '../../components/product/ProductGrid'
+import { SearchIcon } from '../../components/ui/icons'
 import { listProducts } from '../../services/productService'
 import { useAsync } from '../../hooks/useAsync'
 
@@ -46,16 +47,17 @@ function CheckGroup({ title, options, selected, onToggle }) {
 }
 
 export default function Shop() {
-  const [params] = useSearchParams()
+  const [params, setParams] = useSearchParams()
   const [colors, setColors] = useState([])
   const [fabrics, setFabrics] = useState([])
   const [borders, setBorders] = useState([])
   const [bands, setBands] = useState([])
   const [sort, setSort] = useState('featured')
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const [query, setQuery] = useState(params.get('q') || '')
   const { data: products } = useAsync(() => listProducts(), [], [])
 
-  // Seed filters from query params (?min=&max= price band, ?color= colour).
+  // Seed filters from query params (?q= search, ?min=&max= price band, ?color= colour).
   useEffect(() => {
     const min = Number(params.get('min'))
     const max = Number(params.get('max'))
@@ -67,7 +69,17 @@ export default function Shop() {
     }
     const color = params.get('color')
     if (color && COLORS.includes(color)) setColors([color])
+    setQuery(params.get('q') || '')
   }, [params])
+
+  // Keep the ?q= param in sync so the search is shareable/bookmarkable.
+  function onSearchChange(value) {
+    setQuery(value)
+    const next = new URLSearchParams(params)
+    if (value) next.set('q', value)
+    else next.delete('q')
+    setParams(next, { replace: true })
+  }
 
   const toggle = (setter) => (val) =>
     setter((cur) => (cur.includes(val) ? cur.filter((x) => x !== val) : [...cur, val]))
@@ -77,6 +89,18 @@ export default function Shop() {
     const filterQ = params.get('filter')
     if (filterQ === 'new') list = list.filter((p) => p.is_new)
     if (filterQ === 'bestseller') list = list.filter((p) => p.is_bestseller)
+
+    // Text search across the key saree attributes.
+    const q = query.trim().toLowerCase()
+    if (q) {
+      const terms = q.split(/\s+/)
+      list = list.filter((p) => {
+        const hay = [p.name, p.sku, p.collection, p.category, p.color, p.motif, p.weave_type, p.border_type]
+          .join(' ')
+          .toLowerCase()
+        return terms.every((t) => hay.includes(t))
+      })
+    }
 
     if (colors.length) list = list.filter((p) => colors.includes(p.color))
     if (fabrics.length) list = list.filter((p) => fabrics.includes(p.fabric))
@@ -100,7 +124,7 @@ export default function Shop() {
       default:
         return [...list].sort((a, b) => Number(b.is_featured) - Number(a.is_featured))
     }
-  }, [products, colors, fabrics, borders, bands, sort, params])
+  }, [products, colors, fabrics, borders, bands, sort, params, query])
 
   const Filters = () => (
     <>
@@ -125,6 +149,29 @@ export default function Shop() {
           <p className="mx-auto mt-4 max-w-md text-muted">
             Discover our curated collection of handcrafted sarees.
           </p>
+
+          {/* Search bar */}
+          <div className="mx-auto mt-7 flex max-w-xl items-center border border-beige bg-ivory focus-within:border-wine">
+            <span className="pl-4 text-lg text-muted"><SearchIcon /></span>
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => onSearchChange(e.target.value)}
+              placeholder='Search sarees — try "purple peacock" or a SKU'
+              className="w-full bg-transparent px-3 py-3 text-sm outline-none"
+              aria-label="Search sarees"
+            />
+            {query && (
+              <button
+                type="button"
+                onClick={() => onSearchChange('')}
+                className="pr-4 text-sm text-muted hover:text-wine"
+                aria-label="Clear search"
+              >
+                Clear
+              </button>
+            )}
+          </div>
         </Container>
       </section>
 

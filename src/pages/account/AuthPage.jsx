@@ -4,6 +4,7 @@ import Seo from '../../components/common/Seo'
 import Container from '../../components/ui/Container'
 import Button from '../../components/ui/Button'
 import { useAuth } from '../../context/AuthContext'
+import { isValidEmail } from '../../utils/validation'
 
 export default function AuthPage({ mode = 'login' }) {
   const isSignup = mode === 'signup'
@@ -21,6 +22,10 @@ export default function AuthPage({ mode = 'login' }) {
   async function handleSubmit(e) {
     e.preventDefault()
     setError('')
+    if (!isValidEmail(email)) {
+      setError('Enter a valid email address (e.g. name@example.com).')
+      return
+    }
     setBusy(true)
     try {
       if (isSignup) {

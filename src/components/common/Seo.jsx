@@ -2,7 +2,9 @@ import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 
 const SITE_NAME = 'Vastraa Paithani'
-const SITE_URL = 'https://vastraapaithani.example'
+// Set VITE_SITE_URL in the environment (e.g. your Cloudflare Pages / custom domain)
+// so canonical + OpenGraph URLs are correct in production.
+const SITE_URL = import.meta.env.VITE_SITE_URL || 'https://vastraapaithani.example'
 const DEFAULT_DESC =
   'Explore handcrafted Paithani sarees inspired by the heritage of Yeola. Discover traditional silk, bridal and festive collections from Vastraa Paithani.'
 

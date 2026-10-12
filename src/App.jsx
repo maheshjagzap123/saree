@@ -1,6 +1,13 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate, useSearchParams } from 'react-router-dom'
 import Layout from './components/layout/Layout'
 import ProtectedRoute from './components/common/ProtectedRoute'
+
+// Old /search page now lives on /shop — redirect while preserving the ?q= query.
+function SearchRedirect() {
+  const [params] = useSearchParams()
+  const q = params.get('q')
+  return <Navigate to={q ? `/shop?q=${encodeURIComponent(q)}` : '/shop'} replace />
+}
 
 import Home from './pages/public/Home'
 import Shop from './pages/public/Shop'
@@ -13,7 +20,6 @@ import Journal from './pages/public/Journal'
 import CartPage from './pages/public/CartPage'
 import Checkout from './pages/public/Checkout'
 import OrderSuccess from './pages/public/OrderSuccess'
-import Search from './pages/public/Search'
 import Store from './pages/public/Store'
 import Faq from './pages/public/Faq'
 import Policy from './pages/public/Policy'
@@ -57,7 +63,7 @@ export default function App() {
         <Route path="find" element={<FindYourSaree />} />
         <Route path="compare" element={<Compare />} />
         <Route path="store" element={<Store />} />
-        <Route path="search" element={<Search />} />
+        <Route path="search" element={<SearchRedirect />} />
         <Route path="faq" element={<Faq />} />
         <Route path="shipping" element={<Policy type="shipping" />} />
         <Route path="returns" element={<Policy type="returns" />} />

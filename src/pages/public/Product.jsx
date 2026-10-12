@@ -6,6 +6,7 @@ import Button from '../../components/ui/Button'
 import ProductGrid from '../../components/product/ProductGrid'
 import Reveal from '../../components/common/Reveal'
 import Img from '../../components/ui/Img'
+import ZoomImage from '../../components/product/ZoomImage'
 import { HeartIcon } from '../../components/ui/icons'
 import { useStore } from '../../context/StoreContext'
 import { getProduct, listProducts } from '../../services/productService'
@@ -125,8 +126,8 @@ export default function Product() {
                 </button>
               ))}
             </div>
-            <div className="flex-1 overflow-hidden bg-cream">
-              <Img src={product.images[activeImg]} alt={product.name} className="aspect-[4/5] h-full w-full object-cover" />
+            <div className="flex-1 bg-cream">
+              <ZoomImage src={product.images[activeImg]} alt={product.name} className="h-full w-full" />
             </div>
           </div>
 

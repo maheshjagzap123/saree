@@ -143,7 +143,7 @@ export default function Header() {
 
         {/* Actions */}
         <div className="flex items-center gap-4 sm:gap-5">
-          <Link to="/search" aria-label="Search" className="hidden text-xl text-charcoal hover:text-wine sm:block">
+          <Link to="/shop" aria-label="Search sarees" className="hidden text-xl text-charcoal hover:text-wine sm:block">
             <SearchIcon />
           </Link>
           <Link
@@ -195,7 +195,7 @@ export default function Header() {
                 </div>
               ))}
               <hr className="my-2 border-beige" />
-              <Link to="/search" onClick={() => setMobileOpen(false)} className="text-base">Search</Link>
+              <Link to="/shop" onClick={() => setMobileOpen(false)} className="text-base">Search</Link>
               {isAdmin && <Link to="/admin" onClick={() => setMobileOpen(false)} className="text-base">Admin</Link>}
               {isAuthed ? (
                 <>

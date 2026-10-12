@@ -9,9 +9,8 @@ import Img from '../../components/ui/Img'
 import ZoomImage from '../../components/product/ZoomImage'
 import Lightbox from '../../components/product/Lightbox'
 import { HeartIcon } from '../../components/ui/icons'
-import { useStore } from '../../context/StoreContext'
-import { useToast } from '../../context/ToastContext'
 import { useWishlistAction } from '../../hooks/useWishlistAction'
+import { useCartAction } from '../../hooks/useCartAction'
 import { getProduct, listProducts } from '../../services/productService'
 import { useAsync } from '../../hooks/useAsync'
 import { formatPrice } from '../../utils/format'
@@ -31,9 +30,8 @@ function Spec({ label, value }) {
 
 export default function Product() {
   const { slug } = useParams()
-  const { addToCart } = useStore()
+  const { addToCart } = useCartAction()
   const { toggleWish, isWished } = useWishlistAction()
-  const { notify } = useToast()
   const [activeImg, setActiveImg] = useState(0)
   const [qty, setQty] = useState(1)
   const [lightboxOpen, setLightboxOpen] = useState(false)
@@ -206,7 +204,7 @@ export default function Product() {
               <Button
                 className="flex-1"
                 size="lg"
-                onClick={() => { addToCart(product, qty); notify(`${product.name} added to your bag`) }}
+                onClick={() => addToCart(product, qty)}
               >
                 Add to Bag
               </Button>

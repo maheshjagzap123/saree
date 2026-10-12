@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useStore } from '../../context/StoreContext'
+import { useCartAction } from '../../hooks/useCartAction'
 import { formatPrice, discountPercent } from '../../utils/format'
 import Button from '../ui/Button'
 import Badge from '../ui/Badge'
@@ -7,7 +8,8 @@ import Img from '../ui/Img'
 import { CloseIcon } from '../ui/icons'
 
 export default function QuickView() {
-  const { quickView: product, closeQuickView, addToCart } = useStore()
+  const { quickView: product, closeQuickView } = useStore()
+  const { addToCart } = useCartAction()
 
   if (!product) return null
 

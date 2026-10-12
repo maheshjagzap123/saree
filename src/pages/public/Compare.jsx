@@ -2,6 +2,7 @@ import Seo from '../../components/common/Seo'
 import Container from '../../components/ui/Container'
 import Button from '../../components/ui/Button'
 import { useStore } from '../../context/StoreContext'
+import { useCartAction } from '../../hooks/useCartAction'
 import { listProducts } from '../../services/productService'
 import { useAsync } from '../../hooks/useAsync'
 import { formatPrice } from '../../utils/format'
@@ -21,7 +22,8 @@ const ROWS = [
 ]
 
 export default function Compare() {
-  const { compare, removeCompare, addToCart } = useStore()
+  const { compare, removeCompare } = useStore()
+  const { addToCart } = useCartAction()
   const { data: products } = useAsync(() => listProducts(), [], [])
   const all = products || []
   const items = compare.map((slug) => all.find((p) => p.slug === slug)).filter(Boolean)

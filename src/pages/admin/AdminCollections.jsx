@@ -6,8 +6,10 @@ import {
 } from '../../services/adminService'
 import { useAsync } from '../../hooks/useAsync'
 import Button from '../../components/ui/Button'
+import { PageHeader, Panel } from './ui'
+import { LayersIcon } from './adminIcons'
 
-const input = 'w-full border border-beige bg-ivory px-3 py-2 text-sm focus:border-wine'
+const input = 'w-full border border-beige bg-ivory px-3 py-2 text-sm focus:border-wine focus:outline-none'
 const EMPTY = { name: '', slug: '', description: '', cover_image: '', status: 'published' }
 
 export default function AdminCollections() {
@@ -41,10 +43,10 @@ export default function AdminCollections() {
   }
 
   return (
-    <div className="max-w-4xl">
-      <h1 className="font-serif text-3xl">Collections</h1>
+    <div className="max-w-4xl space-y-6">
+      <PageHeader title="Collections" subtitle="Group sarees into curated collections." icon={LayersIcon} />
 
-      <form onSubmit={save} className="mt-6 grid gap-4 border border-beige bg-cream p-5 sm:grid-cols-2">
+      <form onSubmit={save} className="grid gap-4 border border-beige bg-ivory p-5 sm:grid-cols-2">
         <input className={input} placeholder="Name" value={form.name} onChange={set('name')} required />
         <input className={input} placeholder="Slug (optional)" value={form.slug} onChange={set('slug')} />
         <input className={`${input} sm:col-span-2`} placeholder="Cover image URL" value={form.cover_image} onChange={set('cover_image')} />
@@ -62,24 +64,28 @@ export default function AdminCollections() {
         {error && <p className="sm:col-span-2 text-sm text-wine">{error}</p>}
       </form>
 
-      {loading ? (
-        <p className="mt-6 text-muted">Loading…</p>
-      ) : (
-        <ul className="mt-6 divide-y divide-beige border border-beige">
-          {(collections || []).map((c) => (
-            <li key={c.id} className="flex items-center justify-between px-4 py-3 text-sm">
-              <div>
-                <span className="font-medium">{c.name}</span>
-                <span className="ml-2 text-xs text-muted">/{c.slug}</span>
-              </div>
-              <div className="flex gap-4">
-                <button onClick={() => setForm({ ...EMPTY, ...c })} className="text-wine hover:underline">Edit</button>
-                <button onClick={() => remove(c.id, c.name)} className="text-muted hover:text-wine">Delete</button>
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
+      <Panel title="All collections" bodyClassName="p-0">
+        {loading ? (
+          <p className="p-5 text-muted">Loading…</p>
+        ) : (collections || []).length === 0 ? (
+          <p className="p-5 text-muted">No collections yet.</p>
+        ) : (
+          <ul className="divide-y divide-beige">
+            {collections.map((c) => (
+              <li key={c.id} className="flex items-center justify-between px-5 py-3 text-sm hover:bg-cream/40">
+                <div>
+                  <span className="font-medium">{c.name}</span>
+                  <span className="ml-2 text-xs text-muted">/{c.slug}</span>
+                </div>
+                <div className="flex gap-4">
+                  <button onClick={() => setForm({ ...EMPTY, ...c })} className="text-wine hover:underline">Edit</button>
+                  <button onClick={() => remove(c.id, c.name)} className="text-muted hover:text-wine">Delete</button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Panel>
     </div>
   )
 }

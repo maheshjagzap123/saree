@@ -12,6 +12,8 @@ import {
   reorderProductImages,
 } from '../../services/adminService'
 import Button from '../../components/ui/Button'
+import { PageHeader } from './ui'
+import { BoxIcon } from './adminIcons'
 
 const EMPTY = {
   name: '', slug: '', sku: '', price: '', compare_at_price: '', stock_quantity: 0,
@@ -151,9 +153,15 @@ export default function ProductEditor() {
 
   return (
     <div className="max-w-3xl">
-      <h1 className="font-serif text-3xl font-light">{isNew ? 'New Product' : 'Edit Product'}</h1>
+      <PageHeader
+        title={isNew ? 'New Product' : 'Edit Product'}
+        subtitle={isNew ? 'Add a saree to your catalogue.' : form.name}
+        icon={BoxIcon}
+      >
+        <Button to="/admin/products" variant="outline" size="sm">← Back to products</Button>
+      </PageHeader>
 
-      {error && <p className="mt-4 border border-wine/30 bg-wine/5 p-3 text-sm text-wine">{error}</p>}
+      {error && <p className="mb-4 border border-wine/30 bg-wine/5 p-3 text-sm text-wine">{error}</p>}
 
       <form onSubmit={save} className="mt-6 space-y-5">
         <SectionTitle>Basics</SectionTitle>

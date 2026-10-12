@@ -1,54 +1,11 @@
-import { Link } from 'react-router-dom'
 import { getDashboardStats, getSalesSeries, getTopProducts, getRecentOrders } from '../../services/adminService'
 import { useAsync } from '../../hooks/useAsync'
 import { useAuth } from '../../context/AuthContext'
 import { formatPrice } from '../../utils/format'
-import { STATUS_LABELS } from '../../constants/orders'
 import { IMG } from '../../assets/images'
 import { LineChart, BarChart } from './charts'
-import { BoxIcon, CartIcon, UsersIcon, ArrowUp, ArrowDown } from './adminIcons'
-
-function StatCard({ icon: Icon, label, value, change }) {
-  const up = (change ?? 0) >= 0
-  return (
-    <div className="flex items-start gap-4 border border-beige bg-ivory p-5">
-      <div className="flex h-11 w-11 items-center justify-center rounded-md bg-cream text-lg text-wine">
-        <Icon />
-      </div>
-      <div className="min-w-0">
-        <p className="text-[11px] uppercase tracking-wider2 text-muted">{label}</p>
-        <p className="mt-1 font-serif text-2xl font-light">{value}</p>
-        {change != null && (
-          <p className={`mt-1 flex items-center gap-1 text-xs ${up ? 'text-green-700' : 'text-wine'}`}>
-            <span className="text-[10px]">{up ? <ArrowUp /> : <ArrowDown />}</span>
-            {Math.abs(change)}% <span className="text-muted">vs previous period</span>
-          </p>
-        )}
-      </div>
-    </div>
-  )
-}
-
-function Panel({ title, action, children }) {
-  return (
-    <section className="border border-beige bg-ivory">
-      <div className="flex items-center justify-between border-b border-beige px-5 py-4">
-        <h2 className="font-serif text-lg font-light">{title}</h2>
-        {action}
-      </div>
-      <div className="p-5">{children}</div>
-    </section>
-  )
-}
-
-const statusTone = {
-  placed: 'bg-gold/15 text-gold-antique',
-  confirmed: 'bg-purple/10 text-purple',
-  processing: 'bg-gold/15 text-gold-antique',
-  shipped: 'bg-blue-50 text-blue-700',
-  delivered: 'bg-green-50 text-green-700',
-  cancelled: 'bg-wine/10 text-wine',
-}
+import { BoxIcon, CartIcon, UsersIcon } from './adminIcons'
+import { Panel, StatCard, StatusPill, PanelViewAll } from './ui'
 
 export default function Dashboard() {
   const { displayName } = useAuth()
@@ -98,7 +55,7 @@ export default function Dashboard() {
 
       {/* Tables */}
       <div className="grid gap-6 lg:grid-cols-2">
-        <Panel title="Top products" action={<Link to="/admin/products" className="text-sm text-wine hover:underline">View all</Link>}>
+        <Panel title="Top products" action={<PanelViewAll to="/admin/products" />}>
           {top?.length ? (
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
@@ -119,7 +76,7 @@ export default function Dashboard() {
           ) : <p className="text-sm text-muted">No sales yet.</p>}
         </Panel>
 
-        <Panel title="Recent orders" action={<Link to="/admin/orders" className="text-sm text-wine hover:underline">View all</Link>}>
+        <Panel title="Recent orders" action={<PanelViewAll to="/admin/orders" />}>
           {recent?.length ? (
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
@@ -132,11 +89,7 @@ export default function Dashboard() {
                       <td className="py-2.5 pr-3 font-medium">{o.order_number}</td>
                       <td className="py-2.5 pr-3 text-muted">{o.shipping_address?.full_name || '—'}</td>
                       <td className="py-2.5">{formatPrice(o.total)}</td>
-                      <td className="py-2.5">
-                        <span className={`inline-block rounded px-2 py-0.5 text-[11px] ${statusTone[o.status] || 'bg-cream text-charcoal'}`}>
-                          {STATUS_LABELS[o.status] || o.status}
-                        </span>
-                      </td>
+                      <td className="py-2.5"><StatusPill status={o.status} /></td>
                     </tr>
                   ))}
                 </tbody>

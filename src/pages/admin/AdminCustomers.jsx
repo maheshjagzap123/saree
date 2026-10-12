@@ -3,6 +3,7 @@ import { adminListCustomers } from '../../services/adminService'
 import { useAsync } from '../../hooks/useAsync'
 import { formatPrice } from '../../utils/format'
 import { SearchIcon, UsersIcon } from './adminIcons'
+import { PageHeader, Panel, StatCard } from './ui'
 
 // Customers — reads profiles with a derived order count + lifetime spend. Read-only for
 // now (customers manage their own details); admins can search and review.
@@ -30,34 +31,28 @@ export default function AdminCustomers() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className="font-serif text-3xl font-light">Customers</h1>
-          <p className="mt-1 text-sm text-muted">View and review the people shopping with Vastraa.</p>
-        </div>
-        <div className="relative">
-          <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted">
-            <SearchIcon />
-          </span>
+      <PageHeader title="Customers" subtitle="View and review the people shopping with Vastraa." icon={UsersIcon}>
+        <label className="relative">
+          <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted"><SearchIcon /></span>
           <input
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="Search name or phone…"
-            className="w-64 max-w-full border border-beige bg-ivory py-2 pl-9 pr-3 text-sm"
+            className="w-64 max-w-full border border-beige bg-ivory py-2 pl-9 pr-3 text-sm focus:border-wine focus:outline-none"
           />
-        </div>
-      </div>
+        </label>
+      </PageHeader>
 
       {/* Summary chips */}
       {!loading && (
         <div className="grid gap-4 sm:grid-cols-3">
-          <Stat label="Total customers" value={totals.count} />
-          <Stat label="With orders" value={totals.withOrders} />
-          <Stat label="Admins" value={totals.admins} />
+          <StatCard icon={UsersIcon} label="Total customers" value={totals.count} />
+          <StatCard icon={UsersIcon} label="With orders" value={totals.withOrders} />
+          <StatCard icon={UsersIcon} label="Admins" value={totals.admins} />
         </div>
       )}
 
-      <div className="overflow-x-auto border border-beige bg-ivory">
+      <Panel bodyClassName="overflow-x-auto">
         <table className="w-full text-left text-sm">
           <thead className="bg-cream text-[11px] uppercase tracking-wide text-muted">
             <tr>
@@ -103,21 +98,7 @@ export default function AdminCustomers() {
             )}
           </tbody>
         </table>
-      </div>
-    </div>
-  )
-}
-
-function Stat({ label, value }) {
-  return (
-    <div className="flex items-center gap-4 border border-beige bg-ivory p-4">
-      <div className="flex h-10 w-10 items-center justify-center rounded-md bg-cream text-wine">
-        <UsersIcon />
-      </div>
-      <div>
-        <p className="text-[11px] uppercase tracking-wider2 text-muted">{label}</p>
-        <p className="font-serif text-2xl font-light">{value}</p>
-      </div>
+      </Panel>
     </div>
   )
 }

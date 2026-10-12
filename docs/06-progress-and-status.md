@@ -44,7 +44,7 @@ _Last updated: 2026-10-12_
 | Auth (email/password) | ✅ | signup/login/logout; no Google/reset by design |
 | &nbsp;&nbsp;↳ email confirmation | ⚠️ | **ACTION:** turn OFF "Confirm email" in dashboard for instant login |
 | Storage bucket + image upload | ✅ | `product-images` bucket (public) + admin upload in product editor |
-| Admin dashboard + product CRUD | ✅ | `/admin` dashboard, products list + full editor |
+| Admin dashboard + product CRUD | ✅ | `/admin` dashboard, products list + full editor; unified SaaS styling via shared `pages/admin/ui.jsx` (PageHeader/Panel/StatCard/StatusPill), search + status filters, stat cards |
 | Image management (primary, remove) | ✅ | upload, set primary, delete in product editor |
 | Collections/categories admin | ✅ | `/admin/collections`, `/admin/categories` |
 | Orders admin + status/tracking | ✅ | `/admin/orders` list + detail, status + tracking |

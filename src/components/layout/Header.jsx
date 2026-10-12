@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { Link, NavLink } from 'react-router-dom'
 import { useStore } from '../../context/StoreContext'
 import { useAuth } from '../../context/AuthContext'
@@ -161,7 +162,7 @@ export default function Header() {
           <Link
             to={isAuthed ? '/account' : '/login'}
             aria-label={isAuthed ? 'Account' : 'Sign in'}
-            className="hidden text-xl text-charcoal hover:text-wine sm:block"
+            className="text-xl text-charcoal hover:text-wine"
           >
             <UserIcon />
           </Link>
@@ -180,9 +181,10 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Mobile drawer */}
-      {mobileOpen && (
-        <div className="fixed inset-0 z-50 lg:hidden">
+      {/* Mobile drawer — portaled to <body> so `fixed` escapes the header's
+          backdrop-blur stacking context (which otherwise traps/clips it). */}
+      {mobileOpen && createPortal(
+        <div className="fixed inset-0 z-[60] lg:hidden">
           <div className="absolute inset-0 bg-charcoal/40" onClick={() => setMobileOpen(false)} />
           <div className="absolute left-0 top-0 h-full w-80 max-w-[85vw] overflow-y-auto bg-ivory p-6 animate-fade-in">
             <div className="mb-8 flex items-center justify-between">
@@ -220,7 +222,8 @@ export default function Header() {
               <Link to="/contact" onClick={() => setMobileOpen(false)} className="text-base">Contact</Link>
             </nav>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </header>
   )

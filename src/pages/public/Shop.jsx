@@ -142,71 +142,74 @@ export default function Shop() {
         description="Browse our full collection of handcrafted Paithani and silk sarees. Filter by colour, fabric, border and price."
       />
 
-      <section className="border-b border-beige bg-cream py-14 text-center">
+      <section className="border-b border-beige bg-cream py-10 text-center">
         <Container>
           <span className="eyebrow">The Collection</span>
           <h1 className="mt-3 text-4xl sm:text-5xl">All Paithani</h1>
           <p className="mx-auto mt-4 max-w-md text-muted">
             Discover our curated collection of handcrafted sarees.
           </p>
+        </Container>
+      </section>
 
-          {/* Search bar */}
-          <div className="mx-auto mt-7 flex max-w-xl items-center border border-beige bg-ivory focus-within:border-wine">
-            <span className="pl-4 text-lg text-muted"><SearchIcon /></span>
+      {/* Sticky search + sort toolbar — stays below the header while scrolling */}
+      <div className="sticky top-[72px] z-20 border-b border-beige bg-ivory/95 backdrop-blur">
+        <Container className="flex flex-col gap-3 py-3 sm:flex-row sm:items-center">
+          <div className="flex flex-1 items-center border border-beige bg-ivory focus-within:border-wine">
+            <span className="pl-3 text-lg text-muted"><SearchIcon /></span>
             <input
               type="search"
               value={query}
               onChange={(e) => onSearchChange(e.target.value)}
               placeholder='Search sarees — try "purple peacock" or a SKU'
-              className="w-full bg-transparent px-3 py-3 text-sm outline-none"
+              className="w-full bg-transparent px-3 py-2.5 text-sm outline-none"
               aria-label="Search sarees"
             />
             {query && (
               <button
                 type="button"
                 onClick={() => onSearchChange('')}
-                className="pr-4 text-sm text-muted hover:text-wine"
+                className="pr-3 text-sm text-muted hover:text-wine"
                 aria-label="Clear search"
               >
                 Clear
               </button>
             )}
           </div>
-        </Container>
-      </section>
-
-      <Container className="py-12">
-        <div className="flex items-center justify-between border-b border-beige pb-4">
-          <button
-            type="button"
-            className="text-sm uppercase tracking-wide hover:text-wine lg:hidden"
-            onClick={() => setDrawerOpen(true)}
-          >
-            Filter
-          </button>
-          <span className="hidden text-sm text-muted lg:block">{filtered.length} Products</span>
-          <label className="flex items-center gap-2 text-sm">
-            <span className="text-muted">Sort</span>
-            <select
-              value={sort}
-              onChange={(e) => setSort(e.target.value)}
-              className="border border-beige bg-ivory px-3 py-2 focus:border-wine"
+          <div className="flex items-center justify-between gap-4">
+            <button
+              type="button"
+              className="text-sm uppercase tracking-wide hover:text-wine lg:hidden"
+              onClick={() => setDrawerOpen(true)}
             >
-              {SORTS.map((s) => (
-                <option key={s.value} value={s.value}>{s.label}</option>
-              ))}
-            </select>
-          </label>
-        </div>
+              Filter
+            </button>
+            <label className="flex items-center gap-2 text-sm">
+              <span className="text-muted">Sort</span>
+              <select
+                value={sort}
+                onChange={(e) => setSort(e.target.value)}
+                className="border border-beige bg-ivory px-3 py-2 focus:border-wine"
+              >
+                {SORTS.map((s) => (
+                  <option key={s.value} value={s.value}>{s.label}</option>
+                ))}
+              </select>
+            </label>
+          </div>
+        </Container>
+      </div>
 
-        <div className="mt-8 grid gap-10 lg:grid-cols-[240px_1fr]">
+      <Container className="py-10">
+        <p className="mb-6 text-sm text-muted">{filtered.length} Products</p>
+
+        <div className="grid gap-10 lg:grid-cols-[240px_1fr]">
           {/* Desktop filters */}
           <aside className="hidden lg:block">
             <Filters />
           </aside>
 
           <div>
-            <p className="mb-6 text-sm text-muted lg:hidden">{filtered.length} Products</p>
             <ProductGrid products={filtered} />
           </div>
         </div>

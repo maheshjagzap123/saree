@@ -12,4 +12,4 @@ Disallow: /cart
 Disallow: /checkout
 Disallow: /search?
 
-Sitemap: https://vastraapaithani.example/sitemap.xml
+Sitemap: https://vastraapaithani.pages.dev/sitemap.xml

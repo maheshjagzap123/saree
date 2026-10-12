@@ -98,3 +98,26 @@ remove_from_cart, begin_checkout, purchase, add_to_wishlist.
 
 Don't auto-delete sold-out products — show "Sold Out / Notify Me" and keep useful pages
 indexed. Permanently discontinued → appropriate redirect/status. Custom premium 404.
+
+
+## Sitemap (generated at build time)
+
+`public/sitemap.xml` is generated automatically before every build by the `prebuild`
+hook (`scripts/generate-sitemap.mjs`). Run it on demand with `npm run sitemap`.
+
+What it includes:
+
+- **Static routes** — home, shop, collections, craft, find, journal, store, about,
+  contact, faq, shipping, returns, privacy, terms (with advisory `changefreq`/`priority`).
+- **Dynamic routes** — `/products/:slug` and `/collections/:slug` pulled live from
+  Supabase (published only). If Supabase is unreachable it falls back to the mock slugs in
+  `src/data`, so a sitemap is always produced.
+- **Content routes** — `/journal/:slug` and `/craft/:slug` parsed from
+  `src/data/content.js`.
+
+Excluded (matching `robots.txt`): `/admin`, `/account`, `/cart`, `/checkout`, `/search`,
+and the auth pages — these are either private or non-canonical.
+
+Base URL comes from `VITE_SITE_URL`; it falls back to `https://vastraapaithani.pages.dev`.
+`robots.txt` points crawlers at `https://vastraapaithani.pages.dev/sitemap.xml` — update
+both if the production domain changes.

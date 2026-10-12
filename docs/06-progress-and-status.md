@@ -1,6 +1,6 @@
 # 06 — Progress & Status (living tracker)
 
-_Last updated: 2026-10-07_
+_Last updated: 2026-10-12_
 
 ## Legend
 ✅ done · 🟡 partial / mock-data · ⬜ not started
@@ -14,7 +14,7 @@ _Last updated: 2026-10-07_
 | Design system (colors, type, tokens) | ✅ | Tailwind theme |
 | UI primitives (Button, Badge, Container, SectionHeading) | ✅ | |
 | Layout (announcement bar, header, mega menu, footer, WhatsApp btn) | ✅ | announcement text hardcoded for now |
-| Cart + Wishlist (Context) | 🟡 | local state, no persistence |
+| Cart + Wishlist (Context) | ✅ | local for guests; synced to Supabase per-user, cross-device, for signed-in users |
 | Mock product/collection data | 🟡 | `src/data/` |
 | Homepage (all editorial sections) | ✅ | mock data |
 | Shop (filters + sort + grid) | ✅ | client-side filtering of mock data |
@@ -48,13 +48,17 @@ _Last updated: 2026-10-07_
 | Image management (primary, remove) | ✅ | upload, set primary, delete in product editor |
 | Collections/categories admin | ✅ | `/admin/collections`, `/admin/categories` |
 | Orders admin + status/tracking | ✅ | `/admin/orders` list + detail, status + tracking |
+| Customers admin | ✅ | `/admin/customers` — profiles + order count + lifetime spend, search |
+| Enquiries admin | ✅ | `/admin/enquiries` — WhatsApp enquiry hub (no stored table by design) |
+| Content admin (announcement + hero) | ✅ | `/admin/content` → `site_settings` (public read, admin write) |
+| Settings admin (store details) | ✅ | `/admin/settings` → `site_settings` |
 | Customer account area | ✅ | account, orders, order detail + tracking, addresses, profile, wishlist |
 | Checkout flow (no payment) | ✅ | details → review → place order; writes order + items |
 | &nbsp;&nbsp;↳ online payment | ⬜ | intentionally skipped (pay on delivery / WhatsApp) |
 | Journal articles + Article schema | 🟡 | index built, article pages pending |
 | Reviews, coupons, banners CMS | ⬜ | V2 |
-| Homepage CMS (admin-editable content) | ⬜ | Phase 53 |
-| XML sitemap generation | ⬜ | |
+| Homepage CMS (admin-editable content) | 🟡 | admin editor saves to `site_settings`; storefront hero still reads built-in copy |
+| XML sitemap generation | ✅ | `scripts/generate-sitemap.mjs` (prebuild) → `public/sitemap.xml` from live catalog |
 | Product/Organization/LocalBusiness/FAQ/Breadcrumb schema | ✅ | implemented on relevant pages (mock data) |
 | GA4 + Search Console | ⬜ | post-deploy |
 | Performance pass (Lighthouse/CWV) | ⬜ | Phase 9 |

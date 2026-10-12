@@ -318,3 +318,58 @@ export async function adminUpdateOrder(id, patch) {
   if (error) throw error
   return data
 }
+
+// ---------- Customers ----------
+// Lists customer profiles with a derived order count + lifetime spend. Admins can read
+// all profiles and all orders (see migration_auth_admin.sql / migration_cart_wishlist_sync.sql).
+export async function adminListCustomers() {
+  const [{ data: profiles, error: pErr }, { data: orders, error: oErr }] = await Promise.all([
+    supabase
+      .from('profiles')
+      .select('id, full_name, phone, role, created_at')
+      .order('created_at', { ascending: false }),
+    supabase.from('orders').select('user_id, total'),
+  ])
+  if (pErr) throw pErr
+  if (oErr) throw oErr
+
+  // Aggregate orders per user.
+  const agg = new Map()
+  ;(orders || []).forEach((o) => {
+    if (!o.user_id) return
+    const cur = agg.get(o.user_id) || { count: 0, spend: 0 }
+    cur.count += 1
+    cur.spend += Number(o.total || 0)
+    agg.set(o.user_id, cur)
+  })
+
+  return (profiles || []).map((p) => {
+    const a = agg.get(p.id) || { count: 0, spend: 0 }
+    return { ...p, orderCount: a.count, lifetimeSpend: a.spend }
+  })
+}
+
+// ---------- Site settings (key/value jsonb) ----------
+export async function getSetting(key) {
+  const { data, error } = await supabase.from('site_settings').select('value').eq('key', key).maybeSingle()
+  if (error) throw error
+  return data?.value ?? null
+}
+
+export async function getSettings(keys) {
+  const { data, error } = await supabase.from('site_settings').select('key, value').in('key', keys)
+  if (error) throw error
+  const out = {}
+  ;(data || []).forEach((r) => { out[r.key] = r.value })
+  return out
+}
+
+export async function saveSetting(key, value) {
+  const { data, error } = await supabase
+    .from('site_settings')
+    .upsert({ key, value }, { onConflict: 'key' })
+    .select()
+    .single()
+  if (error) throw error
+  return data
+}

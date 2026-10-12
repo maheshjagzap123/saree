@@ -10,7 +10,8 @@
   "scripts": {
     "dev": "vite",
     "sitemap": "node scripts/generate-sitemap.mjs",
-    "prebuild": "node scripts/generate-sitemap.mjs",
+    "optimize:images": "node scripts/optimize-images.mjs",
+    "prebuild": "node scripts/optimize-images.mjs && node scripts/generate-sitemap.mjs",
     "build": "vite build",
     "preview": "vite preview"
   },
@@ -25,6 +26,7 @@
     "autoprefixer": "^10.4.20",
     "pg": "^8.23.1",
     "postcss": "^8.4.47",
+    "sharp": "^0.35.5",
     "tailwindcss": "^3.4.13",
     "vite": "^5.4.8"
   }

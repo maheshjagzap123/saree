@@ -61,7 +61,7 @@ _Last updated: 2026-10-12_
 | XML sitemap generation | ✅ | `scripts/generate-sitemap.mjs` (prebuild) → `public/sitemap.xml` from live catalog |
 | Product/Organization/LocalBusiness/FAQ/Breadcrumb schema | ✅ | implemented on relevant pages (mock data) |
 | GA4 + Search Console | ⬜ | post-deploy |
-| Performance pass (Lighthouse/CWV) | ⬜ | Phase 9 |
+| Performance pass (Lighthouse/CWV) | 🟡 | images optimized to WebP: bundle 90→10 MB, storage ~3.3 MB→~419 KB each (see docs/12); CWV measurement + code-split still open |
 | Deployment (Vercel + Supabase + domain) | ⬜ | Phase 10 |
 
 ## How to extend

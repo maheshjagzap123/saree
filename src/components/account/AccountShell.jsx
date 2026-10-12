@@ -10,6 +10,7 @@ const base = { width: '1em', height: '1em', viewBox: '0 0 24 24', fill: 'none', 
 const GridIcon = (p) => (<svg {...base} {...p}><rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="3" y="14" width="7" height="7" /><rect x="14" y="14" width="7" height="7" /></svg>)
 const PinIcon = (p) => (<svg {...base} {...p}><path d="M12 21s-6-5.3-6-10a6 6 0 1 1 12 0c0 4.7-6 10-6 10Z" /><circle cx="12" cy="11" r="2" /></svg>)
 const IdIcon = (p) => (<svg {...base} {...p}><rect x="3" y="5" width="18" height="14" rx="1" /><circle cx="9" cy="11" r="2" /><path d="M14 10h4M14 13h4M6 15.5c.8-1.2 4.2-1.2 5 0" /></svg>)
+const LockTabIcon = (p) => (<svg {...base} {...p}><rect x="5" y="11" width="14" height="9" rx="1" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg>)
 const OutIcon = (p) => (<svg {...base} {...p}><path d="M10 17l-5-5 5-5M4 12h11M14 4h5v16h-5" /></svg>)
 
 export const TABS = [
@@ -18,6 +19,7 @@ export const TABS = [
   { key: 'wishlist', label: 'Wishlist', Icon: HeartIcon },
   { key: 'addresses', label: 'Addresses', Icon: PinIcon },
   { key: 'profile', label: 'Profile Details', Icon: IdIcon },
+  { key: 'security', label: 'Security', Icon: LockTabIcon },
 ]
 
 const heroImg = IMG.burgundyPeacock
@@ -71,7 +73,7 @@ export default function AccountShell({ renderPanel }) {
         <Container className="relative py-12 lg:py-16">
           <div className="max-w-xl">
             <span className="eyebrow">Your Account</span>
-            <h1 className="mt-3 font-serif text-4xl font-light leading-tight sm:text-5xl">
+            <h1 className="mt-3 break-words font-serif text-4xl font-light leading-tight sm:text-5xl">
               Welcome back, {name}
             </h1>
             <p className="mt-3 text-muted">Manage your orders, details and saved sarees in one place.</p>
@@ -81,9 +83,9 @@ export default function AccountShell({ renderPanel }) {
 
       {/* MAIN */}
       <Container className="py-12">
-        <div className="grid gap-8 lg:grid-cols-[220px_1fr_260px]">
+        <div className="grid min-w-0 gap-8 lg:grid-cols-[220px_minmax(0,1fr)_260px]">
           {/* Sidebar — buttons that switch the panel (no route change) */}
-          <aside>
+          <aside className="min-w-0">
             <nav className="flex gap-1 overflow-x-auto border border-beige bg-cream p-2 lg:flex-col lg:overflow-visible">
               {TABS.map(({ key, label, Icon }) => {
                 const isActive = active === key

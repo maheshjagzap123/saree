@@ -6,6 +6,11 @@
   html {
     scroll-behavior: smooth;
   }
+  html, body {
+    /* Prevent accidental horizontal overflow / page stretching on mobile. */
+    overflow-x: hidden;
+    max-width: 100%;
+  }
   body {
     @apply bg-ivory text-charcoal font-sans antialiased;
   }

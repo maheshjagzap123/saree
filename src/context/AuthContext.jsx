@@ -67,6 +67,14 @@ export function AuthProvider({ children }) {
       async refreshProfile() {
         if (user) await loadProfile(user.id)
       },
+      async changePassword({ currentPassword, newPassword }) {
+        // Courtesy re-check of the current password before updating.
+        if (currentPassword) {
+          const ok = await auth.verifyCurrentPassword(user?.email, currentPassword)
+          if (!ok) throw new Error('Your current password is incorrect.')
+        }
+        await auth.updatePassword(newPassword)
+      },
     }),
     [user, profile, loading]
   )

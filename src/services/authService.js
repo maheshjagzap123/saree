@@ -34,6 +34,22 @@ export async function signOut() {
   await supabase.auth.signOut()
 }
 
+// Updates the signed-in user's password. The active session authenticates the request,
+// so the current password isn't required by Supabase. We re-verify it client-side (below)
+// as a courtesy before calling this.
+export async function updatePassword(newPassword) {
+  if (!isSupabaseConfigured) throw new Error('Supabase is not configured.')
+  const { error } = await supabase.auth.updateUser({ password: newPassword })
+  if (error) throw error
+}
+
+// Verifies the current password by attempting a sign-in with it (does not change session).
+export async function verifyCurrentPassword(email, currentPassword) {
+  if (!isSupabaseConfigured) return true
+  const { error } = await supabase.auth.signInWithPassword({ email, password: currentPassword })
+  return !error
+}
+
 export async function getSession() {
   if (!isSupabaseConfigured) return null
   const { data } = await supabase.auth.getSession()

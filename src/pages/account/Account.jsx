@@ -5,6 +5,7 @@ import OrdersPanel from '../../components/account/panels/OrdersPanel'
 import WishlistPanel from '../../components/account/panels/WishlistPanel'
 import AddressesPanel from '../../components/account/panels/AddressesPanel'
 import ProfilePanel from '../../components/account/panels/ProfilePanel'
+import SecurityPanel from '../../components/account/panels/SecurityPanel'
 
 const TITLES = {
   overview: 'My Account',
@@ -12,6 +13,7 @@ const TITLES = {
   wishlist: 'Wishlist',
   addresses: 'Addresses',
   profile: 'Profile Details',
+  security: 'Security',
 }
 
 // Single-page account area. The sidebar switches the panel in place (via ?tab=),
@@ -28,6 +30,7 @@ export default function Account() {
           case 'wishlist': panel = <WishlistPanel />; break
           case 'addresses': panel = <AddressesPanel />; break
           case 'profile': panel = <ProfilePanel />; break
+          case 'security': panel = <SecurityPanel />; break
           default: panel = <OverviewPanel onSelect={onSelect} />
         }
         return (

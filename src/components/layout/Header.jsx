@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import { useStore } from '../../context/StoreContext'
 import { useAuth } from '../../context/AuthContext'
@@ -93,9 +93,21 @@ export default function Header() {
   const [openMenu, setOpenMenu] = useState(null)
   const [mobileOpen, setMobileOpen] = useState(false)
 
+  // Lock body scroll + close on Escape while the mobile drawer is open.
+  useEffect(() => {
+    if (!mobileOpen) return
+    const onKey = (e) => e.key === 'Escape' && setMobileOpen(false)
+    document.addEventListener('keydown', onKey)
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      document.body.style.overflow = ''
+    }
+  }, [mobileOpen])
+
   return (
     <header className="sticky top-0 z-30 border-b border-beige bg-ivory/95 backdrop-blur">
-      <div className="container-max flex items-center justify-between gap-6 py-4">
+      <div className="container-max flex items-center justify-between gap-3 py-4 sm:gap-6">
         {/* Mobile menu toggle */}
         <button type="button" className="text-2xl lg:hidden" aria-label="Open menu" onClick={() => setMobileOpen(true)}>
           <MenuIcon />

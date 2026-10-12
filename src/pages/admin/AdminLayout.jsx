@@ -41,20 +41,20 @@ export default function AdminLayout() {
         </div>
       </aside>
 
-      <div className="flex flex-1 flex-col">
+      <div className="flex min-w-0 flex-1 flex-col">
         {/* Top bar */}
-        <header className="flex items-center justify-between border-b border-beige px-6 py-4">
-          <div className="flex gap-4 lg:hidden">
+        <header className="flex flex-col gap-2 border-b border-beige px-4 py-3 sm:flex-row sm:items-center sm:px-6 sm:py-4">
+          <div className="-mx-1 flex gap-4 overflow-x-auto px-1 lg:hidden">
             {nav.map((n) => (
-              <NavLink key={n.to} to={n.to} end={n.end} className="text-xs uppercase tracking-wide hover:text-wine">
+              <NavLink key={n.to} to={n.to} end={n.end} className="shrink-0 whitespace-nowrap text-xs uppercase tracking-wide hover:text-wine">
                 {n.label}
               </NavLink>
             ))}
           </div>
-          <span className="ml-auto text-sm text-muted">Signed in as {displayName}</span>
+          <span className="text-xs text-muted sm:ml-auto sm:text-sm">Signed in as {displayName}</span>
         </header>
 
-        <main className="flex-1 p-6">
+        <main className="min-w-0 flex-1 p-4 sm:p-6">
           <Outlet />
         </main>
       </div>

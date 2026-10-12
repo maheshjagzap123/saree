@@ -4,7 +4,7 @@ import { announcement } from '../../data/content'
 export default function AnnouncementBar() {
   return (
     <div className="bg-wine text-ivory">
-      <div className="container-max flex items-center justify-center py-2 text-center text-xs tracking-wider2 uppercase">
+      <div className="container-max flex items-center justify-center py-2 text-center text-[10px] uppercase leading-tight tracking-wide sm:text-xs sm:tracking-wider2">
         {announcement}
       </div>
     </div>

@@ -70,13 +70,16 @@ export default function AccountShell({ renderPanel }) {
           <Img src={heroImg} alt="" aria-hidden="true" loading="eager" className="h-full w-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-r from-cream via-cream/60 to-transparent" />
         </div>
-        <Container className="relative py-12 lg:py-16">
+        <Container className="relative py-10 lg:py-16">
           <div className="max-w-xl">
             <span className="eyebrow">Your Account</span>
-            <h1 className="mt-3 break-words font-serif text-4xl font-light leading-tight sm:text-5xl">
+            <h1
+              className="mt-3 break-words font-serif font-light leading-tight"
+              style={{ fontSize: 'clamp(1.9rem, 7vw, 3.25rem)' }}
+            >
               Welcome back, {name}
             </h1>
-            <p className="mt-3 text-muted">Manage your orders, details and saved sarees in one place.</p>
+            <p className="mt-3 text-sm text-muted sm:text-base">Manage your orders, details and saved sarees in one place.</p>
           </div>
         </Container>
       </section>
@@ -84,9 +87,10 @@ export default function AccountShell({ renderPanel }) {
       {/* MAIN */}
       <Container className="py-12">
         <div className="grid min-w-0 gap-8 lg:grid-cols-[220px_minmax(0,1fr)_260px]">
-          {/* Sidebar — buttons that switch the panel (no route change) */}
+          {/* Sidebar — buttons that switch the panel (no route change).
+              Mobile: 2-col grid of tiles. Desktop: vertical list. */}
           <aside className="min-w-0">
-            <nav className="flex gap-1 overflow-x-auto border border-beige bg-cream p-2 lg:flex-col lg:overflow-visible">
+            <nav className="grid grid-cols-2 gap-1 border border-beige bg-cream p-2 sm:grid-cols-3 lg:grid-cols-1">
               {TABS.map(({ key, label, Icon }) => {
                 const isActive = active === key
                 return (
@@ -95,24 +99,24 @@ export default function AccountShell({ renderPanel }) {
                     type="button"
                     aria-current={isActive ? 'page' : undefined}
                     onClick={() => selectTab(key)}
-                    className={`flex shrink-0 items-center gap-3 border-l-2 px-3 py-2.5 text-sm transition-colors lg:shrink ${
+                    className={`flex items-center gap-2.5 border-l-2 px-3 py-2.5 text-sm transition-colors ${
                       isActive
                         ? 'border-wine bg-wine/5 font-medium text-wine'
                         : 'border-transparent text-charcoal hover:bg-beige/40'
                     }`}
                   >
-                    <span className="text-base"><Icon /></span>
-                    <span className="whitespace-nowrap">{label}</span>
+                    <span className="shrink-0 text-base"><Icon /></span>
+                    <span className="truncate">{label}</span>
                   </button>
                 )
               })}
               <button
                 type="button"
                 onClick={handleSignOut}
-                className="flex shrink-0 items-center gap-3 border-l-2 border-transparent px-3 py-2.5 text-sm text-charcoal transition-colors hover:bg-beige/40 lg:shrink"
+                className="flex items-center gap-2.5 border-l-2 border-transparent px-3 py-2.5 text-sm text-charcoal transition-colors hover:bg-beige/40"
               >
-                <span className="text-base"><OutIcon /></span>
-                <span className="whitespace-nowrap">Sign Out</span>
+                <span className="shrink-0 text-base"><OutIcon /></span>
+                <span className="truncate">Sign Out</span>
               </button>
             </nav>
           </aside>

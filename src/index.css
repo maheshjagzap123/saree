@@ -3,16 +3,34 @@
 @tailwind utilities;
 
 @layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
   html {
     scroll-behavior: smooth;
+    /* Match the app background so no mismatched strip shows at any zoom level. */
+    background-color: #FBF8F3;
   }
-  html, body {
-    /* Prevent accidental horizontal overflow / page stretching on mobile. */
-    overflow-x: hidden;
+  html, body, #root {
+    width: 100%;
     max-width: 100%;
+    min-width: 0;
+    min-height: 100%;
   }
   body {
+    margin: 0;
+    /* Guard against accidental horizontal overflow without hiding real causes elsewhere. */
+    overflow-x: hidden;
     @apply bg-ivory text-charcoal font-sans antialiased;
+  }
+  /* Media never forces the page wider than its container. */
+  img, video {
+    max-width: 100%;
+    height: auto;
+  }
+  /* Form controls shrink inside their containers on small screens. */
+  input, select, textarea, button {
+    max-width: 100%;
   }
   h1, h2, h3, h4 {
     @apply font-serif text-charcoal;
@@ -24,7 +42,7 @@
 
 @layer components {
   .container-max {
-    @apply mx-auto w-full max-w-container px-5 sm:px-8 lg:px-12;
+    @apply mx-auto w-full max-w-container px-4 sm:px-8 lg:px-12;
   }
   .eyebrow {
     @apply text-xs uppercase tracking-wider2 text-gold font-medium;

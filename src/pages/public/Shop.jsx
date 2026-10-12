@@ -263,7 +263,7 @@ export default function Shop() {
       {drawerOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-charcoal/40" onClick={() => setDrawerOpen(false)} />
-          <div className="absolute left-0 top-0 h-full w-80 overflow-y-auto bg-ivory p-6">
+          <div className="absolute left-0 top-0 h-full w-80 max-w-[85vw] overflow-y-auto bg-ivory p-6">
             <div className="mb-4 flex items-center justify-between">
               <span className="font-serif text-xl">Filters</span>
               <button className="text-sm underline" onClick={() => setDrawerOpen(false)}>Done</button>

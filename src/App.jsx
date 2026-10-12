@@ -31,11 +31,7 @@ import NotFound from './pages/public/NotFound'
 
 import AuthPage from './pages/account/AuthPage'
 import Account from './pages/account/Account'
-import Orders from './pages/account/Orders'
 import OrderDetail from './pages/account/OrderDetail'
-import Addresses from './pages/account/Addresses'
-import Profile from './pages/account/Profile'
-import Wishlist from './pages/account/Wishlist'
 
 import AdminLayout from './pages/admin/AdminLayout'
 import Dashboard from './pages/admin/Dashboard'
@@ -81,13 +77,14 @@ export default function App() {
         <Route path="checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
         <Route path="order-success" element={<ProtectedRoute><OrderSuccess /></ProtectedRoute>} />
 
-        {/* Customer account (protected) */}
+        {/* Customer account — single page with in-place tab panels (?tab=) */}
         <Route path="account" element={<ProtectedRoute><Account /></ProtectedRoute>} />
-        <Route path="account/orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
         <Route path="account/orders/:id" element={<ProtectedRoute><OrderDetail /></ProtectedRoute>} />
-        <Route path="account/addresses" element={<ProtectedRoute><Addresses /></ProtectedRoute>} />
-        <Route path="account/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-        <Route path="account/wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
+        {/* Legacy sub-routes redirect to the single account page with the right tab */}
+        <Route path="account/orders" element={<Navigate to="/account?tab=orders" replace />} />
+        <Route path="account/wishlist" element={<Navigate to="/account?tab=wishlist" replace />} />
+        <Route path="account/addresses" element={<Navigate to="/account?tab=addresses" replace />} />
+        <Route path="account/profile" element={<Navigate to="/account?tab=profile" replace />} />
 
         <Route path="*" element={<NotFound />} />
       </Route>

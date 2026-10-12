@@ -153,7 +153,7 @@ export default function Header() {
           >
             <UserIcon />
           </Link>
-          <Link to="/account/wishlist" aria-label="Wishlist" className="relative text-xl text-charcoal hover:text-wine">
+          <Link to="/account?tab=wishlist" aria-label="Wishlist" className="relative text-xl text-charcoal hover:text-wine">
             <HeartIcon />
             {wishCount > 0 && (
               <span className="absolute -right-2 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-wine px-1 text-[10px] text-ivory">{wishCount}</span>

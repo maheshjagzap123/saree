@@ -44,7 +44,7 @@ export async function getProfile(userId) {
   if (!isSupabaseConfigured || !userId) return null
   const { data } = await supabase
     .from('profiles')
-    .select('id, full_name, phone, role')
+    .select('id, full_name, phone, role, date_of_birth, newsletter_opt_in, created_at')
     .eq('id', userId)
     .maybeSingle()
   return data

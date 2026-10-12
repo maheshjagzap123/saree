@@ -64,6 +64,9 @@ export function AuthProvider({ children }) {
         setUser(null)
         setProfile(null)
       },
+      async refreshProfile() {
+        if (user) await loadProfile(user.id)
+      },
     }),
     [user, profile, loading]
   )

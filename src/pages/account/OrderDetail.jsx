@@ -18,7 +18,7 @@ export default function OrderDetail() {
     return (
       <Container className="py-24 text-center">
         <h1 className="font-serif text-3xl">Order not found</h1>
-        <Button to="/account/orders" className="mt-6">Back to Orders</Button>
+        <Button to="/account?tab=orders" className="mt-6">Back to Orders</Button>
       </Container>
     )
   }
@@ -30,7 +30,7 @@ export default function OrderDetail() {
     <>
       <Seo title={`Order ${order.order_number}`} description="Order details and tracking." />
       <Container className="py-14">
-        <Link to="/account/orders" className="text-sm text-muted hover:text-wine">← All orders</Link>
+        <Link to="/account?tab=orders" className="text-sm text-muted hover:text-wine">← All orders</Link>
         <h1 className="mt-2 font-serif text-4xl">{order.order_number}</h1>
         <p className="mt-1 text-sm text-muted">Placed {new Date(order.created_at).toLocaleString()}</p>
 

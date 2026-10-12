@@ -50,7 +50,7 @@ export default function OrderSuccess() {
         </ol>
 
         <div className="mt-12 flex justify-center gap-4">
-          <Button to="/account/orders">View My Orders</Button>
+          <Button to="/account?tab=orders">View My Orders</Button>
           <Button to="/shop" variant="outline">Continue Shopping</Button>
         </div>
       </Container>

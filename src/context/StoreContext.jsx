@@ -1,7 +1,18 @@
-import { createContext, useContext, useEffect, useMemo, useReducer, useState } from 'react'
+import { createContext, useContext, useEffect, useMemo, useReducer, useRef, useState } from 'react'
+import { useAuth } from './AuthContext'
+import * as sync from '../services/syncService'
 
-// Local cart + wishlist state. Persists to localStorage for guests.
-// Later: sync to Supabase `carts`/`cart_items` and `wishlists` for logged-in users.
+// Cart + wishlist state.
+//
+// Guests: state lives in localStorage so it survives refreshes.
+// Signed-in users: state is synced to Supabase (`carts`/`cart_items`, `wishlists`/
+// `wishlist_items`) so the bag and wishlist follow them across devices. On sign-in any
+// guest items are merged into the server copy, then the server becomes the source of
+// truth. Local state is still updated optimistically for a snappy UI; server writes run
+// in the background and are reconciled on the next load.
+//
+// NOTE: add-to-bag and wishlist both require sign-in (see useCartAction/useWishlistAction),
+// so writes to the server only ever happen for an authenticated user.
 
 const StoreContext = createContext(null)
 
@@ -48,18 +59,30 @@ function cartReducer(state, action) {
         .filter((i) => i.qty > 0)
     case 'clear':
       return []
+    case 'replace':
+      return Array.isArray(action.items) ? action.items : []
     default:
       return state
   }
 }
 
 export function StoreProvider({ children }) {
+  const { user } = useAuth()
+  const userId = user?.id || null
+
   const [cart, dispatch] = useReducer(cartReducer, [], () => load(CART_KEY, []))
   const [wishlist, setWishlist] = useState(() => load(WISH_KEY, []))
   const [cartOpen, setCartOpen] = useState(false)
   const [quickView, setQuickView] = useState(null)
   const [compare, setCompare] = useState(() => load(COMPARE_KEY, []))
+  const [syncing, setSyncing] = useState(false)
 
+  // Tracks which user the in-memory state belongs to, so we only merge-on-login once
+  // per sign-in and know when to clear on sign-out.
+  const syncedUserRef = useRef(null)
+
+  // Persist to localStorage. For signed-in users this is a convenience cache; the server
+  // is authoritative and re-hydrates on the next login.
   useEffect(() => {
     localStorage.setItem(CART_KEY, JSON.stringify(cart))
   }, [cart])
@@ -69,6 +92,63 @@ export function StoreProvider({ children }) {
   useEffect(() => {
     localStorage.setItem(COMPARE_KEY, JSON.stringify(compare))
   }, [compare])
+
+  // ---------- Sync with Supabase on auth changes ----------
+  useEffect(() => {
+    let active = true
+
+    async function onSignIn() {
+      setSyncing(true)
+      try {
+        // Merge whatever the guest had locally, then adopt the server state.
+        const localCart = load(CART_KEY, [])
+        const localWish = load(WISH_KEY, [])
+        const [serverCart, serverWish] = await Promise.all([
+          sync.mergeCart(userId, localCart),
+          sync.mergeWishlist(userId, localWish),
+        ])
+        if (!active) return
+        if (serverCart) dispatch({ type: 'replace', items: serverCart })
+        if (serverWish) setWishlist(serverWish)
+        syncedUserRef.current = userId
+      } catch (e) {
+        if (import.meta.env.DEV) console.warn('[StoreContext] sign-in sync failed:', e.message)
+        // Keep local state; it will be retried on the next sign-in.
+        syncedUserRef.current = userId
+      } finally {
+        if (active) setSyncing(false)
+      }
+    }
+
+    function onSignOut() {
+      // Clear in-memory bag/wishlist so one account's items don't linger for the next
+      // visitor on a shared device. (Compare is not account-bound; leave it.)
+      dispatch({ type: 'clear' })
+      setWishlist([])
+      syncedUserRef.current = null
+    }
+
+    if (userId) {
+      if (syncedUserRef.current !== userId) onSignIn()
+    } else if (syncedUserRef.current) {
+      onSignOut()
+    }
+
+    return () => {
+      active = false
+    }
+  }, [userId])
+
+  // Fire-and-forget server write for authed users; log (don't throw) on failure so the
+  // optimistic UI stays responsive. The next sign-in reconciles any drift.
+  function mirror(fn) {
+    if (!userId) return
+    Promise.resolve()
+      .then(fn)
+      .catch((e) => {
+        if (import.meta.env.DEV) console.warn('[StoreContext] server sync failed:', e.message)
+      })
+  }
 
   const value = useMemo(() => {
     const cartCount = cart.reduce((n, i) => n + i.qty, 0)
@@ -81,19 +161,37 @@ export function StoreProvider({ children }) {
       cartSubtotal,
       cartOpen,
       setCartOpen,
+      syncing,
       addToCart: (product, qty) => {
         dispatch({ type: 'add', product, qty })
         setCartOpen(true)
+        // Compute the new quantity for this product so the server mirrors the summed total.
+        const current = cart.find((i) => i.id === product.id)?.qty || 0
+        mirror(() => sync.setCartItem(userId, product.id, current + (qty || 1)))
       },
-      removeFromCart: (id) => dispatch({ type: 'remove', id }),
-      setQty: (id, qty) => dispatch({ type: 'setQty', id, qty }),
-      clearCart: () => dispatch({ type: 'clear' }),
+      removeFromCart: (id) => {
+        dispatch({ type: 'remove', id })
+        mirror(() => sync.removeCartItem(userId, id))
+      },
+      setQty: (id, qty) => {
+        const next = Math.max(1, qty)
+        dispatch({ type: 'setQty', id, qty: next })
+        mirror(() => sync.setCartItem(userId, id, next))
+      },
+      clearCart: () => {
+        dispatch({ type: 'clear' })
+        mirror(() => sync.clearCart(userId))
+      },
       // wishlist
       wishlist,
       wishCount: wishlist.length,
       isWished: (id) => wishlist.includes(id),
       toggleWish: (id) =>
-        setWishlist((w) => (w.includes(id) ? w.filter((x) => x !== id) : [...w, id])),
+        setWishlist((w) => {
+          const has = w.includes(id)
+          mirror(() => (has ? sync.removeWishlistItem(userId, id) : sync.addWishlistItem(userId, id)))
+          return has ? w.filter((x) => x !== id) : [...w, id]
+        }),
       // quick view
       quickView,
       openQuickView: (product) => setQuickView(product),
@@ -112,7 +210,7 @@ export function StoreProvider({ children }) {
       removeCompare: (slug) => setCompare((c) => c.filter((s) => s !== slug)),
       clearCompare: () => setCompare([]),
     }
-  }, [cart, wishlist, cartOpen, quickView, compare])
+  }, [cart, wishlist, cartOpen, quickView, compare, syncing, userId])
 
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>
 }

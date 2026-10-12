@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom'
 import Seo from '../../components/common/Seo'
 import Container from '../../components/ui/Container'
 import ProductGrid from '../../components/product/ProductGrid'
+import { ProductGridSkeleton } from '../../components/ui/Skeleton'
 import { SearchIcon } from '../../components/ui/icons'
 import { listProducts } from '../../services/productService'
 import { useAsync } from '../../hooks/useAsync'
@@ -55,7 +56,20 @@ export default function Shop() {
   const [sort, setSort] = useState('featured')
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [query, setQuery] = useState(params.get('q') || '')
-  const { data: products } = useAsync(() => listProducts(), [], [])
+  const { data: products, loading } = useAsync(() => listProducts(), [], [])
+
+  // Active filter chips (search + checkbox filters).
+  const activeChips = [
+    ...(query ? [{ label: `“${query}”`, clear: () => onSearchChange('') }] : []),
+    ...bands.map((b) => ({ label: b, clear: () => setBands((c) => c.filter((x) => x !== b)) })),
+    ...colors.map((c) => ({ label: c, clear: () => setColors((x) => x.filter((v) => v !== c)) })),
+    ...fabrics.map((f) => ({ label: f, clear: () => setFabrics((x) => x.filter((v) => v !== f)) })),
+    ...borders.map((b) => ({ label: b, clear: () => setBorders((x) => x.filter((v) => v !== b)) })),
+  ]
+  function clearAll() {
+    setBands([]); setColors([]); setFabrics([]); setBorders([])
+    onSearchChange('')
+  }
 
   // Seed filters from query params (?q= search, ?min=&max= price band, ?color= colour).
   useEffect(() => {
@@ -201,7 +215,26 @@ export default function Shop() {
       </div>
 
       <Container className="py-10">
-        <p className="mb-6 text-sm text-muted">{filtered.length} Products</p>
+        <div className="mb-6 flex flex-wrap items-center gap-3">
+          <p className="text-sm text-muted">{filtered.length} Products</p>
+          {activeChips.length > 0 && (
+            <>
+              <span className="text-beige">|</span>
+              {activeChips.map((chip, i) => (
+                <button
+                  key={i}
+                  onClick={chip.clear}
+                  className="flex items-center gap-1.5 border border-beige bg-cream px-3 py-1 text-xs hover:border-wine hover:text-wine"
+                >
+                  {chip.label} <span aria-hidden>×</span>
+                </button>
+              ))}
+              <button onClick={clearAll} className="text-xs uppercase tracking-wide text-wine hover:underline">
+                Clear all
+              </button>
+            </>
+          )}
+        </div>
 
         <div className="grid gap-10 lg:grid-cols-[240px_1fr]">
           {/* Desktop filters */}
@@ -210,7 +243,18 @@ export default function Shop() {
           </aside>
 
           <div>
-            <ProductGrid products={filtered} />
+            {loading ? (
+              <ProductGridSkeleton count={8} />
+            ) : filtered.length === 0 ? (
+              <div className="py-16 text-center">
+                <p className="text-muted">No sarees match your selection.</p>
+                {activeChips.length > 0 && (
+                  <button onClick={clearAll} className="mt-4 text-sm text-wine hover:underline">Clear all filters</button>
+                )}
+              </div>
+            ) : (
+              <ProductGrid products={filtered} />
+            )}
           </div>
         </div>
       </Container>

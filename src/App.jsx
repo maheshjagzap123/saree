@@ -17,6 +17,7 @@ import Product from './pages/public/Product'
 import About from './pages/public/About'
 import Contact from './pages/public/Contact'
 import Journal from './pages/public/Journal'
+import JournalArticle from './pages/public/JournalArticle'
 import CartPage from './pages/public/CartPage'
 import Checkout from './pages/public/Checkout'
 import OrderSuccess from './pages/public/OrderSuccess'
@@ -58,6 +59,7 @@ export default function App() {
         <Route path="our-story" element={<About />} />
         <Route path="contact" element={<Contact />} />
         <Route path="journal" element={<Journal />} />
+        <Route path="journal/:slug" element={<JournalArticle />} />
         <Route path="craft" element={<CraftLibrary />} />
         <Route path="craft/:slug" element={<CraftLibrary />} />
         <Route path="find" element={<FindYourSaree />} />

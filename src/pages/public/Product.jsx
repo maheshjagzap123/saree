@@ -7,8 +7,10 @@ import ProductGrid from '../../components/product/ProductGrid'
 import Reveal from '../../components/common/Reveal'
 import Img from '../../components/ui/Img'
 import ZoomImage from '../../components/product/ZoomImage'
+import Lightbox from '../../components/product/Lightbox'
 import { HeartIcon } from '../../components/ui/icons'
 import { useStore } from '../../context/StoreContext'
+import { useToast } from '../../context/ToastContext'
 import { getProduct, listProducts } from '../../services/productService'
 import { useAsync } from '../../hooks/useAsync'
 import { formatPrice } from '../../utils/format'
@@ -29,14 +31,18 @@ function Spec({ label, value }) {
 export default function Product() {
   const { slug } = useParams()
   const { addToCart, toggleWish, isWished } = useStore()
+  const { notify } = useToast()
   const [activeImg, setActiveImg] = useState(0)
+  const [qty, setQty] = useState(1)
+  const [lightboxOpen, setLightboxOpen] = useState(false)
 
   const { data: product, loading } = useAsync(() => getProduct(slug), [slug])
   const { data: allProducts } = useAsync(() => listProducts(), [], [])
 
-  // Record + reset gallery when the product changes.
+  // Record + reset gallery/qty when the product changes.
   useEffect(() => {
     setActiveImg(0)
+    setQty(1)
     if (product?.slug) recordRecentlyViewed(product.slug)
   }, [product?.slug])
 
@@ -127,7 +133,14 @@ export default function Product() {
               ))}
             </div>
             <div className="flex-1 bg-cream">
-              <ZoomImage src={product.images[activeImg]} alt={product.name} className="h-full w-full" />
+              <button
+                type="button"
+                onClick={() => setLightboxOpen(true)}
+                className="block w-full cursor-zoom-in"
+                aria-label="Open fullscreen image viewer"
+              >
+                <ZoomImage src={product.images[activeImg]} alt={product.name} className="h-full w-full" />
+              </button>
             </div>
           </div>
 
@@ -158,9 +171,49 @@ export default function Product() {
               </span>
             </div>
 
-            <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-              <Button className="flex-1" size="lg" onClick={() => addToCart(product)}>Add to Bag</Button>
-              <Button variant="outline" size="lg" className="flex-1" onClick={() => toggleWish(product.id)}>
+            {/* Quantity */}
+            <div className="mt-7 flex items-center gap-4">
+              <span className="text-sm text-muted">Quantity</span>
+              <div className="flex items-center border border-beige">
+                <button
+                  type="button"
+                  aria-label="Decrease quantity"
+                  onClick={() => setQty((q) => Math.max(1, q - 1))}
+                  className="px-3 py-2 text-charcoal hover:text-wine disabled:opacity-30"
+                  disabled={qty <= 1}
+                >
+                  −
+                </button>
+                <span className="min-w-10 px-2 text-center text-sm">{qty}</span>
+                <button
+                  type="button"
+                  aria-label="Increase quantity"
+                  onClick={() => setQty((q) => (inStock ? Math.min(product.stock_quantity, q + 1) : q + 1))}
+                  className="px-3 py-2 text-charcoal hover:text-wine disabled:opacity-30"
+                  disabled={inStock && qty >= product.stock_quantity}
+                >
+                  +
+                </button>
+              </div>
+              {inStock && product.stock_quantity <= 5 && (
+                <span className="text-xs text-wine">Only {product.stock_quantity} left</span>
+              )}
+            </div>
+
+            <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+              <Button
+                className="flex-1"
+                size="lg"
+                onClick={() => { addToCart(product, qty); notify(`${product.name} added to your bag`) }}
+              >
+                Add to Bag
+              </Button>
+              <Button
+                variant="outline"
+                size="lg"
+                className="flex-1"
+                onClick={() => { toggleWish(product.id); notify(wished ? 'Removed from wishlist' : 'Saved to wishlist') }}
+              >
                 <HeartIcon filled={wished} /> {wished ? 'Wishlisted' : 'Wishlist'}
               </Button>
             </div>
@@ -250,6 +303,16 @@ export default function Product() {
             <div className="mt-10"><ProductGrid products={recentlyViewed} /></div>
           </Container>
         </section>
+      )}
+
+      {lightboxOpen && (
+        <Lightbox
+          images={product.images}
+          index={activeImg}
+          onIndex={setActiveImg}
+          onClose={() => setLightboxOpen(false)}
+          alt={product.name}
+        />
       )}
     </>
   )

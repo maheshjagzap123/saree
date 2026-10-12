@@ -255,7 +255,7 @@ export default function Home() {
                 </p>
                 <div className="mt-7 flex flex-wrap gap-4">
                   <Button to={`/products/${storyProduct.slug}`}>View the Saree</Button>
-                  <Button to="/journal" variant="ghost" className="px-0 link-underline">Read the story →</Button>
+                  <Button to="/journal/what-is-paithani-saree" variant="ghost" className="px-0 link-underline">Read the story →</Button>
                 </div>
               </Reveal>
             </div>
@@ -293,7 +293,7 @@ export default function Home() {
           <div className="mt-12 grid gap-8 md:grid-cols-3">
             {journal.map((a, i) => (
               <Reveal key={a.slug} delay={i * 70}>
-                <Link to="/journal" className="group block">
+                <Link to={`/journal/${a.slug}`} className="group block">
                   <div className="aspect-[16/11] overflow-hidden bg-cream">
                     <Img src={a.image} alt={a.title} className="h-full w-full object-cover transition-transform duration-[1200ms] group-hover:scale-105" />
                   </div>

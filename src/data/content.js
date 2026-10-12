@@ -50,23 +50,60 @@ export const journal = [
     title: 'What Is a Paithani Saree?',
     excerpt: 'An introduction to the heritage, weave and character of the Paithani.',
     category: 'Paithani',
+    author: 'The Vastraa Atelier',
+    published: '2026-01-12',
+    updated: '2026-01-12',
     image: IMG.ivoryZari,
+    body: [
+      { type: 'p', text: 'The Paithani is one of India’s most treasured handwoven sarees, named after the town of Paithan in Maharashtra and long associated with the weaving town of Yeola. It is distinguished by its silk ground, its oblique-weave border, and a pallu (the decorative end-piece) often alive with motifs such as the peacock and the lotus.' },
+      { type: 'h', text: 'What makes it distinctive' },
+      { type: 'p', text: 'Unlike printed or power-loom sarees, a traditional Paithani is woven thread by thread. The border and pallu are typically worked in a technique that makes the pattern appear the same on both sides, and the motifs are built up by hand rather than printed on.' },
+      { type: 'h', text: 'The motifs' },
+      { type: 'p', text: 'Common motifs include the muniya (a small parrot), the peacock, and flowering vines known as asawali. The choice and density of these motifs is part of what gives each Paithani its character.' },
+      { type: 'p', text: 'If you are buying your first Paithani, start by deciding the occasion and the colour you are drawn to — the weave and motif can follow from there.' },
+    ],
   },
   {
     slug: 'single-muniya-vs-triple-muniya',
     title: 'Single Muniya vs Triple Muniya',
     excerpt: 'Understanding the difference between these two classic Paithani weaves.',
     category: 'Weaves',
+    author: 'The Vastraa Atelier',
+    published: '2026-01-20',
+    updated: '2026-01-20',
     image: IMG.emeraldGoldBrocade,
+    body: [
+      { type: 'p', text: 'The “muniya” refers to the small parrot motif that runs along the border of many Paithani sarees. The number of rows of this motif is one of the clearest ways to tell two otherwise similar sarees apart.' },
+      { type: 'h', text: 'Single Muniya' },
+      { type: 'p', text: 'A single muniya has one row of parrot motifs along the border. It reads as more understated and is a lovely choice for festive wear and everyday celebrations.' },
+      { type: 'h', text: 'Triple Muniya' },
+      { type: 'p', text: 'A triple muniya carries three rows of the motif, producing a deeper, richer border. It feels more elaborate and is often chosen for weddings and more formal occasions.' },
+      { type: 'p', text: 'Neither is “better” — the right choice depends on the occasion and how bold you want the border to feel.' },
+    ],
   },
   {
     slug: 'how-to-care-for-paithani-saree',
     title: 'How to Care for a Silk Paithani',
     excerpt: 'Simple ways to store, protect and preserve your silk saree for years.',
     category: 'Care',
+    author: 'The Vastraa Atelier',
+    published: '2026-02-02',
+    updated: '2026-02-02',
     image: IMG.ivoryBrocade,
+    body: [
+      { type: 'p', text: 'A good Paithani is meant to last for years and be passed on. A little care keeps the silk and the zari looking their best.' },
+      { type: 'h', text: 'Storing' },
+      { type: 'p', text: 'Store the saree wrapped in a soft cotton or muslin cloth, away from direct sunlight. Avoid plastic covers for long periods, as silk needs to breathe. Refold the saree occasionally so the same creases don’t set permanently.' },
+      { type: 'h', text: 'Cleaning' },
+      { type: 'p', text: 'Dry clean only, and tell the cleaner it is a silk saree with zari work. Avoid home washing, and keep perfume and moisture away from the fabric, as both can affect the silk and the metallic thread.' },
+      { type: 'p', text: 'Always refer to the specific care note on each product page, as some weaves have particular requirements.' },
+    ],
   },
 ]
+
+export function getArticle(slug) {
+  return journal.find((a) => a.slug === slug)
+}
 
 export const store = {
   name: 'Vastraa Paithani',

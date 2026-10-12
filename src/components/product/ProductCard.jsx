@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useStore } from '../../context/StoreContext'
+import { useWishlistAction } from '../../hooks/useWishlistAction'
 import { formatPrice } from '../../utils/format'
 import { HeartIcon } from '../ui/icons'
 import Img from '../ui/Img'
@@ -8,7 +9,8 @@ import Img from '../ui/Img'
 // wishlist. "View Saree →" appears on hover (desktop) and is always usable via the card
 // link on mobile — no essential action is hover-only.
 export default function ProductCard({ product }) {
-  const { toggleWish, isWished, openQuickView, inCompare, toggleCompare } = useStore()
+  const { openQuickView, inCompare, toggleCompare } = useStore()
+  const { toggleWish, isWished } = useWishlistAction()
   const wished = isWished(product.id)
   const comparing = inCompare(product.slug)
 

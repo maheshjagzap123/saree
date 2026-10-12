@@ -11,6 +11,7 @@ import Lightbox from '../../components/product/Lightbox'
 import { HeartIcon } from '../../components/ui/icons'
 import { useStore } from '../../context/StoreContext'
 import { useToast } from '../../context/ToastContext'
+import { useWishlistAction } from '../../hooks/useWishlistAction'
 import { getProduct, listProducts } from '../../services/productService'
 import { useAsync } from '../../hooks/useAsync'
 import { formatPrice } from '../../utils/format'
@@ -30,7 +31,8 @@ function Spec({ label, value }) {
 
 export default function Product() {
   const { slug } = useParams()
-  const { addToCart, toggleWish, isWished } = useStore()
+  const { addToCart } = useStore()
+  const { toggleWish, isWished } = useWishlistAction()
   const { notify } = useToast()
   const [activeImg, setActiveImg] = useState(0)
   const [qty, setQty] = useState(1)
@@ -212,7 +214,7 @@ export default function Product() {
                 variant="outline"
                 size="lg"
                 className="flex-1"
-                onClick={() => { toggleWish(product.id); notify(wished ? 'Removed from wishlist' : 'Saved to wishlist') }}
+                onClick={() => toggleWish(product.id)}
               >
                 <HeartIcon filled={wished} /> {wished ? 'Wishlisted' : 'Wishlist'}
               </Button>

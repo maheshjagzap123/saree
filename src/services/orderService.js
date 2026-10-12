@@ -37,11 +37,28 @@ export async function listMyOrders(userId) {
   if (!isSupabaseConfigured || !userId) return []
   const { data, error } = await supabase
     .from('orders')
-    .select('id, order_number, status, total, created_at')
+    .select(
+      'id, order_number, status, total, created_at, ' +
+        'order_items ( name, quantity, product_id, products ( slug, product_images ( url, is_primary ) ) )'
+    )
     .eq('user_id', userId)
     .order('created_at', { ascending: false })
   if (error) throw error
-  return data
+
+  // Flatten each order's items into a simple shape the UI can render.
+  return (data || []).map((o) => ({
+    ...o,
+    items: (o.order_items || []).map((it) => {
+      const imgs = it.products?.product_images || []
+      const primary = imgs.find((i) => i.is_primary) || imgs[0]
+      return {
+        name: it.name,
+        quantity: it.quantity,
+        slug: it.products?.slug || null,
+        image: primary?.url || null,
+      }
+    }),
+  }))
 }
 
 export async function getMyOrder(id) {

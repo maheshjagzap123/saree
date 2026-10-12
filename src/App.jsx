@@ -40,6 +40,7 @@ import ProductEditor from './pages/admin/ProductEditor'
 import AdminCollections from './pages/admin/AdminCollections'
 import AdminCategories from './pages/admin/AdminCategories'
 import AdminOrders from './pages/admin/AdminOrders'
+import AdminPlaceholder from './pages/admin/AdminPlaceholder'
 
 export default function App() {
   return (
@@ -104,6 +105,10 @@ export default function App() {
         <Route path="collections" element={<AdminCollections />} />
         <Route path="categories" element={<AdminCategories />} />
         <Route path="orders" element={<AdminOrders />} />
+        <Route path="customers" element={<AdminPlaceholder title="Customers" note="View and manage your customers." />} />
+        <Route path="enquiries" element={<AdminPlaceholder title="Enquiries" note="WhatsApp and contact enquiries." />} />
+        <Route path="content" element={<AdminPlaceholder title="Content" note="Edit homepage, announcement bar and site content." />} />
+        <Route path="settings" element={<AdminPlaceholder title="Settings" note="Store settings and preferences." />} />
       </Route>
     </Routes>
   )

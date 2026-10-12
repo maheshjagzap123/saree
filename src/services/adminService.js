@@ -7,21 +7,64 @@ import { slugify } from '../utils/format'
 const BUCKET = 'product-images'
 
 // ---------- Dashboard ----------
-export async function getDashboardStats() {
-  const [products, collections, orders] = await Promise.all([
+function pctChange(current, previous) {
+  if (!previous) return current > 0 ? 100 : 0
+  return Math.round(((current - previous) / previous) * 100)
+}
+
+export async function getDashboardStats(days = 14) {
+  const now = new Date()
+  const start = new Date(now); start.setDate(now.getDate() - days)
+  const prevStart = new Date(now); prevStart.setDate(now.getDate() - days * 2)
+
+  const [products, collections, customers, orders] = await Promise.all([
     supabase.from('products').select('id', { count: 'exact', head: true }),
     supabase.from('collections').select('id', { count: 'exact', head: true }),
-    supabase.from('orders').select('total', { count: 'exact' }),
+    supabase.from('profiles').select('id, created_at'),
+    supabase.from('orders').select('total, created_at'),
   ])
-  const revenue = (orders.data || []).reduce((sum, o) => sum + Number(o.total || 0), 0)
-  const orderCount = orders.count ?? 0
+
+  const allOrders = orders.data || []
+  const revenue = allOrders.reduce((s, o) => s + Number(o.total || 0), 0)
+  const orderCount = allOrders.length
+
+  // Current vs previous window for trend %.
+  const inWindow = (iso, from, to) => { const d = new Date(iso); return d >= from && d < to }
+  const curOrders = allOrders.filter((o) => inWindow(o.created_at, start, now))
+  const prevOrders = allOrders.filter((o) => inWindow(o.created_at, prevStart, start))
+  const curRevenue = curOrders.reduce((s, o) => s + Number(o.total || 0), 0)
+  const prevRevenue = prevOrders.reduce((s, o) => s + Number(o.total || 0), 0)
+
+  const allCustomers = customers.data || []
+  const curCustomers = allCustomers.filter((c) => inWindow(c.created_at, start, now)).length
+  const prevCustomers = allCustomers.filter((c) => inWindow(c.created_at, prevStart, start)).length
+
   return {
+    revenue,
+    orders: orderCount,
     products: products.count ?? 0,
     collections: collections.count ?? 0,
-    orders: orderCount,
-    revenue,
+    customers: allCustomers.length,
     avgOrderValue: orderCount ? revenue / orderCount : 0,
+    changes: {
+      revenue: pctChange(curRevenue, prevRevenue),
+      orders: pctChange(curOrders.length, prevOrders.length),
+      products: 0, // products aren't time-bucketed here
+      customers: pctChange(curCustomers, prevCustomers),
+    },
+    windowDays: days,
   }
+}
+
+// Most recent orders for the dashboard table.
+export async function getRecentOrders(limit = 5) {
+  const { data, error } = await supabase
+    .from('orders')
+    .select('id, order_number, total, status, created_at, shipping_address')
+    .order('created_at', { ascending: false })
+    .limit(limit)
+  if (error) throw error
+  return data || []
 }
 
 // Daily revenue + order counts over the last `days` days (for trend charts).

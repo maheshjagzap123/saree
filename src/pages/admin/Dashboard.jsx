@@ -1,67 +1,149 @@
-import { getDashboardStats, getSalesSeries, getTopProducts } from '../../services/adminService'
+import { Link } from 'react-router-dom'
+import { getDashboardStats, getSalesSeries, getTopProducts, getRecentOrders } from '../../services/adminService'
 import { useAsync } from '../../hooks/useAsync'
+import { useAuth } from '../../context/AuthContext'
 import { formatPrice } from '../../utils/format'
-import { LineChart, BarList } from './charts'
+import { STATUS_LABELS } from '../../constants/orders'
+import { IMG } from '../../assets/images'
+import { LineChart, BarChart } from './charts'
+import { BoxIcon, CartIcon, UsersIcon, ArrowUp, ArrowDown } from './adminIcons'
 
-function Card({ label, value }) {
+function StatCard({ icon: Icon, label, value, change }) {
+  const up = (change ?? 0) >= 0
   return (
-    <div className="border border-beige bg-cream p-6">
-      <p className="eyebrow">{label}</p>
-      <p className="mt-2 font-serif text-3xl font-light">{value}</p>
+    <div className="flex items-start gap-4 border border-beige bg-ivory p-5">
+      <div className="flex h-11 w-11 items-center justify-center rounded-md bg-cream text-lg text-wine">
+        <Icon />
+      </div>
+      <div className="min-w-0">
+        <p className="text-[11px] uppercase tracking-wider2 text-muted">{label}</p>
+        <p className="mt-1 font-serif text-2xl font-light">{value}</p>
+        {change != null && (
+          <p className={`mt-1 flex items-center gap-1 text-xs ${up ? 'text-green-700' : 'text-wine'}`}>
+            <span className="text-[10px]">{up ? <ArrowUp /> : <ArrowDown />}</span>
+            {Math.abs(change)}% <span className="text-muted">vs previous period</span>
+          </p>
+        )}
+      </div>
     </div>
   )
 }
 
+function Panel({ title, action, children }) {
+  return (
+    <section className="border border-beige bg-ivory">
+      <div className="flex items-center justify-between border-b border-beige px-5 py-4">
+        <h2 className="font-serif text-lg font-light">{title}</h2>
+        {action}
+      </div>
+      <div className="p-5">{children}</div>
+    </section>
+  )
+}
+
+const statusTone = {
+  placed: 'bg-gold/15 text-gold-antique',
+  confirmed: 'bg-purple/10 text-purple',
+  processing: 'bg-gold/15 text-gold-antique',
+  shipped: 'bg-blue-50 text-blue-700',
+  delivered: 'bg-green-50 text-green-700',
+  cancelled: 'bg-wine/10 text-wine',
+}
+
 export default function Dashboard() {
-  const { data: stats, loading } = useAsync(() => getDashboardStats(), [])
+  const { displayName } = useAuth()
+  const { data: stats, loading } = useAsync(() => getDashboardStats(14), [])
   const { data: series } = useAsync(() => getSalesSeries(14), [], [])
   const { data: top } = useAsync(() => getTopProducts(5), [], [])
+  const { data: recent } = useAsync(() => getRecentOrders(5), [], [])
+
+  const c = stats?.changes || {}
 
   return (
-    <div>
-      <h1 className="font-serif text-3xl font-light">Dashboard</h1>
-      <p className="mt-1 text-sm text-muted">An overview of your store.</p>
+    <div className="space-y-6">
+      {/* Welcome banner */}
+      <section className="relative overflow-hidden border border-beige bg-cream">
+        <div className="absolute inset-y-0 right-0 hidden w-2/5 md:block">
+          <img src={IMG.burgundyPeacock} alt="" aria-hidden className="h-full w-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-r from-cream via-cream/70 to-transparent" />
+        </div>
+        <div className="relative px-6 py-8 sm:py-10">
+          <p className="text-sm text-muted">Welcome back,</p>
+          <h1 className="mt-1 font-serif text-3xl font-light sm:text-4xl">{displayName}</h1>
+          <p className="mt-2 max-w-md text-sm text-muted">Here's what's happening with your Vastraa store today.</p>
+        </div>
+      </section>
 
+      {/* Metric cards */}
       {loading ? (
-        <p className="mt-8 text-muted">Loading…</p>
+        <p className="text-muted">Loading…</p>
       ) : (
-        <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          <Card label="Revenue" value={formatPrice(stats?.revenue || 0)} />
-          <Card label="Orders" value={stats?.orders ?? 0} />
-          <Card label="Avg Order Value" value={formatPrice(stats?.avgOrderValue || 0)} />
-          <Card label="Products" value={stats?.products ?? 0} />
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <StatCard icon={CartIcon} label="Total Revenue" value={formatPrice(stats?.revenue || 0)} change={c.revenue} />
+          <StatCard icon={CartIcon} label="Total Orders" value={stats?.orders ?? 0} change={c.orders} />
+          <StatCard icon={BoxIcon} label="Total Products" value={stats?.products ?? 0} change={c.products} />
+          <StatCard icon={UsersIcon} label="Total Customers" value={stats?.customers ?? 0} change={c.customers} />
         </div>
       )}
 
-      <div className="mt-10 grid gap-6 lg:grid-cols-2">
-        <div className="border border-beige p-6">
-          <div className="flex items-center justify-between">
-            <h2 className="font-serif text-xl font-light">Revenue — last 14 days</h2>
-          </div>
-          {series && series.length > 0 ? (
-            <div className="mt-4"><LineChart data={series} valueKey="revenue" /></div>
-          ) : (
-            <p className="mt-4 text-sm text-muted">No data yet.</p>
-          )}
-        </div>
-
-        <div className="border border-beige p-6">
-          <h2 className="font-serif text-xl font-light">Orders — last 14 days</h2>
-          {series && series.length > 0 ? (
-            <div className="mt-4"><LineChart data={series} valueKey="orders" /></div>
-          ) : (
-            <p className="mt-4 text-sm text-muted">No data yet.</p>
-          )}
-        </div>
+      {/* Charts */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        <Panel title="Revenue — Last 14 days">
+          {series?.length ? <LineChart data={series} valueKey="revenue" /> : <p className="text-sm text-muted">No data yet.</p>}
+        </Panel>
+        <Panel title="Orders — Last 14 days">
+          {series?.length ? <BarChart data={series} valueKey="orders" /> : <p className="text-sm text-muted">No data yet.</p>}
+        </Panel>
       </div>
 
-      <div className="mt-6 border border-beige p-6">
-        <h2 className="font-serif text-xl font-light">Top products</h2>
-        {top && top.length > 0 ? (
-          <div className="mt-4"><BarList items={top} /></div>
-        ) : (
-          <p className="mt-4 text-sm text-muted">No sales yet — top products appear once orders are placed.</p>
-        )}
+      {/* Tables */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        <Panel title="Top products" action={<Link to="/admin/products" className="text-sm text-wine hover:underline">View all</Link>}>
+          {top?.length ? (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm">
+                <thead className="text-[11px] uppercase tracking-wide text-muted">
+                  <tr><th className="pb-2">Product</th><th className="pb-2">Sold</th><th className="pb-2 text-right">Revenue</th></tr>
+                </thead>
+                <tbody className="divide-y divide-beige">
+                  {top.map((t) => (
+                    <tr key={t.name}>
+                      <td className="py-2.5 pr-3">{t.name}</td>
+                      <td className="py-2.5">{t.qty}</td>
+                      <td className="py-2.5 text-right">{formatPrice(t.revenue)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : <p className="text-sm text-muted">No sales yet.</p>}
+        </Panel>
+
+        <Panel title="Recent orders" action={<Link to="/admin/orders" className="text-sm text-wine hover:underline">View all</Link>}>
+          {recent?.length ? (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm">
+                <thead className="text-[11px] uppercase tracking-wide text-muted">
+                  <tr><th className="pb-2">Order</th><th className="pb-2">Customer</th><th className="pb-2">Total</th><th className="pb-2">Status</th></tr>
+                </thead>
+                <tbody className="divide-y divide-beige">
+                  {recent.map((o) => (
+                    <tr key={o.id}>
+                      <td className="py-2.5 pr-3 font-medium">{o.order_number}</td>
+                      <td className="py-2.5 pr-3 text-muted">{o.shipping_address?.full_name || '—'}</td>
+                      <td className="py-2.5">{formatPrice(o.total)}</td>
+                      <td className="py-2.5">
+                        <span className={`inline-block rounded px-2 py-0.5 text-[11px] ${statusTone[o.status] || 'bg-cream text-charcoal'}`}>
+                          {STATUS_LABELS[o.status] || o.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : <p className="text-sm text-muted">No orders yet.</p>}
+        </Panel>
       </div>
     </div>
   )

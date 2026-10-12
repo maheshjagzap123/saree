@@ -11,7 +11,7 @@ export default function AuthPage({ mode = 'login' }) {
   const { signIn, signUp } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
-  const redirectTo = location.state?.from || '/account'
+  const from = location.state?.from
 
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
@@ -28,12 +28,15 @@ export default function AuthPage({ mode = 'login' }) {
     }
     setBusy(true)
     try {
-      if (isSignup) {
-        await signUp({ email, password, fullName })
-      } else {
-        await signIn({ email, password })
-      }
-      navigate(redirectTo, { replace: true })
+      const res = isSignup
+        ? await signUp({ email, password, fullName })
+        : await signIn({ email, password })
+
+      // Route by role: admins go to the admin dashboard, customers to their account
+      // (or back to the page they were trying to reach).
+      const isAdmin = res?.profile?.role === 'admin'
+      const dest = isAdmin ? '/admin' : from || '/account'
+      navigate(dest, { replace: true })
     } catch (err) {
       setError(err.message || 'Something went wrong. Please try again.')
     } finally {

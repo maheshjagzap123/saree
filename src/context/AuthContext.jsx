@@ -53,11 +53,18 @@ export function AuthProvider({ children }) {
       displayName: profile?.full_name || user?.email?.split('@')[0] || 'there',
       async signUp(args) {
         const res = await auth.signUp(args)
-        return res
+        // Load the profile so callers can route by role immediately.
+        const uid = res?.user?.id || res?.session?.user?.id
+        const p = uid ? await auth.getProfile(uid) : null
+        if (p) setProfile(p)
+        return { ...res, profile: p }
       },
       async signIn(args) {
         const res = await auth.signIn(args)
-        return res
+        const uid = res?.user?.id || res?.session?.user?.id
+        const p = uid ? await auth.getProfile(uid) : null
+        if (p) setProfile(p)
+        return { ...res, profile: p }
       },
       async signOut() {
         await auth.signOut()

@@ -7,6 +7,7 @@ import Reveal from '../../components/common/Reveal'
 import Img from '../../components/ui/Img'
 import { listProducts, listCollections } from '../../services/productService'
 import { useAsync } from '../../hooks/useAsync'
+import { useSettings } from '../../context/SettingsContext'
 import { formatPrice } from '../../utils/format'
 import {
   hero,
@@ -29,7 +30,13 @@ const organizationLd = {
 
 export default function Home() {
   const { data: products } = useAsync(() => listProducts(), [], [])
+  const { homepage } = useSettings()
   const list = products || []
+
+  // Admin-editable hero copy (site_settings) with static-content fallbacks baked into the
+  // settings context. Title may be one line (admin) or multi-line (default) — split on
+  // newlines so both render cleanly.
+  const heroTitleLines = (homepage.hero_title || hero.titleLines.join('\n')).split('\n')
 
   const signature = [...list].sort((a, b) => b.price - a.price)[0]
   const currentEdit = list.filter((p) => p.is_featured).slice(0, 6)
@@ -57,15 +64,17 @@ export default function Home() {
         <div className="absolute inset-0 flex items-center">
           <Container>
             <div className="max-w-2xl text-ivory">
-              <span className="eyebrow animate-fade-in text-gold-soft">{hero.eyebrow}</span>
+              <span className="eyebrow animate-fade-in text-gold-soft">{homepage.hero_eyebrow}</span>
               <h1 className="mt-5 font-serif text-4xl font-light leading-[1.08] text-ivory animate-fade-up sm:text-6xl lg:text-7xl">
-                {hero.titleLines.map((l, i) => (
+                {heroTitleLines.map((l, i) => (
                   <span key={i} className="block">{l}</span>
                 ))}
               </h1>
-              <p className="mt-6 max-w-md text-base text-ivory/85 animate-fade-up-slow">{hero.copy}</p>
+              {homepage.hero_subtitle && (
+                <p className="mt-6 max-w-md text-base text-ivory/85 animate-fade-up-slow">{homepage.hero_subtitle}</p>
+              )}
               <div className="mt-9 flex flex-wrap gap-4 animate-fade-up-slow">
-                <Button to={hero.primaryCta.to} variant="gold" size="lg">{hero.primaryCta.label}</Button>
+                <Button to={homepage.cta_link || hero.primaryCta.to} variant="gold" size="lg">{homepage.cta_label || hero.primaryCta.label}</Button>
                 <Button to={hero.secondaryCta.to} variant="light" size="lg">{hero.secondaryCta.label}</Button>
               </div>
             </div>

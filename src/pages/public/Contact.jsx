@@ -2,10 +2,11 @@ import { useState } from 'react'
 import Seo from '../../components/common/Seo'
 import Container from '../../components/ui/Container'
 import Button from '../../components/ui/Button'
-import { store } from '../../data/content'
+import { useSettings } from '../../context/SettingsContext'
 
 export default function Contact() {
   const [sent, setSent] = useState(false)
+  const { store } = useSettings()
 
   return (
     <>

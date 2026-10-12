@@ -1,31 +1,31 @@
 import Seo, { SITE_URL } from '../../components/common/Seo'
 import Container from '../../components/ui/Container'
 import Button from '../../components/ui/Button'
-import { store } from '../../data/content'
-
-// LocalBusiness schema — only include details the real business can verify.
-const localBusinessLd = {
-  '@context': 'https://schema.org',
-  '@type': 'Store',
-  name: store.name,
-  description: 'Premium handcrafted Paithani and silk sarees.',
-  url: `${SITE_URL}/store`,
-  telephone: store.phone,
-  email: store.email,
-  address: {
-    '@type': 'PostalAddress',
-    streetAddress: store.address,
-    addressRegion: 'Maharashtra',
-    addressCountry: 'IN',
-  },
-  openingHours: 'Mo-Sa 10:00-20:00',
-}
-
-const mapsHref = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-  store.address
-)}`
+import { useSettings } from '../../context/SettingsContext'
 
 export default function Store() {
+  const { store } = useSettings()
+
+  // LocalBusiness schema — only include details the real business can verify.
+  const localBusinessLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Store',
+    name: store.name,
+    description: 'Premium handcrafted Paithani and silk sarees.',
+    url: `${SITE_URL}/store`,
+    telephone: store.phone,
+    email: store.email,
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: store.address,
+      addressRegion: 'Maharashtra',
+      addressCountry: 'IN',
+    },
+    openingHours: 'Mo-Sa 10:00-20:00',
+  }
+
+  const mapsHref = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(store.address)}`
+
   return (
     <>
       <Seo

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import Container from '../ui/Container'
 import Button from '../ui/Button'
+import { useSettings } from '../../context/SettingsContext'
 
 const groups = [
   {
@@ -31,17 +32,22 @@ const groups = [
       ['FAQ', '/faq'],
     ],
   },
-  {
-    title: 'Follow',
-    links: [
-      ['Instagram', 'https://instagram.com'],
-      ['Facebook', 'https://facebook.com'],
-    ],
-    external: true,
-  },
 ]
 
 export default function Footer() {
+  const { store } = useSettings()
+
+  // "Follow" links use admin-configured social URLs, falling back to brand defaults.
+  const followGroup = {
+    title: 'Follow',
+    external: true,
+    links: [
+      ['Instagram', store.instagram || 'https://instagram.com'],
+      ['Facebook', store.facebook || 'https://facebook.com'],
+    ],
+  }
+  const allGroups = [...groups, followGroup]
+
   return (
     <footer className="mt-28 border-t border-beige bg-cream">
       <Container className="py-20">
@@ -74,7 +80,7 @@ export default function Footer() {
             <p className="mt-4 max-w-xs text-sm text-muted">A digital atelier for Paithani sarees.</p>
           </div>
 
-          {groups.map((g) => (
+          {allGroups.map((g) => (
             <div key={g.title}>
               <h3 className="eyebrow mb-4">{g.title}</h3>
               <ul className="space-y-2.5 text-sm text-muted">

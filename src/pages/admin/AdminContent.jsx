@@ -106,8 +106,8 @@ export default function AdminContent() {
           {saving === 'homepage' ? 'Saving…' : 'Save homepage'}
         </Button>
         <p className="mt-3 text-xs text-muted">
-          Note: the storefront hero currently uses built-in copy. These values are saved for
-          when the hero is wired to read from settings.
+          These values drive the homepage hero on the live site. Changes appear on the next
+          page load.
         </p>
       </section>
     </div>

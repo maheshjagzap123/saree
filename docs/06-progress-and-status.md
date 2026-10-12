@@ -13,7 +13,7 @@ _Last updated: 2026-10-12_
 | Routing (React Router) | ✅ | public routes wired |
 | Design system (colors, type, tokens) | ✅ | Tailwind theme |
 | UI primitives (Button, Badge, Container, SectionHeading) | ✅ | |
-| Layout (announcement bar, header, mega menu, footer, WhatsApp btn) | ✅ | announcement text hardcoded for now |
+| Layout (announcement bar, header, mega menu, footer, WhatsApp btn) | ✅ | announcement + store details read from `site_settings` (admin-editable) |
 | Cart + Wishlist (Context) | ✅ | local for guests; synced to Supabase per-user, cross-device, for signed-in users |
 | Mock product/collection data | 🟡 | `src/data/` |
 | Homepage (all editorial sections) | ✅ | mock data |
@@ -50,14 +50,14 @@ _Last updated: 2026-10-12_
 | Orders admin + status/tracking | ✅ | `/admin/orders` list + detail, status + tracking |
 | Customers admin | ✅ | `/admin/customers` — profiles + order count + lifetime spend, search |
 | Enquiries admin | ✅ | `/admin/enquiries` — WhatsApp enquiry hub (no stored table by design) |
-| Content admin (announcement + hero) | ✅ | `/admin/content` → `site_settings` (public read, admin write) |
+| Content admin (announcement + hero) | ✅ | `/admin/content` → `site_settings`; storefront reads it live via `SettingsContext` |
 | Settings admin (store details) | ✅ | `/admin/settings` → `site_settings` |
 | Customer account area | ✅ | account, orders, order detail + tracking, addresses, profile, wishlist |
 | Checkout flow (no payment) | ✅ | details → review → place order; writes order + items |
 | &nbsp;&nbsp;↳ online payment | ⬜ | intentionally skipped (pay on delivery / WhatsApp) |
 | Journal articles + Article schema | 🟡 | index built, article pages pending |
 | Reviews, coupons, banners CMS | ⬜ | V2 |
-| Homepage CMS (admin-editable content) | 🟡 | admin editor saves to `site_settings`; storefront hero still reads built-in copy |
+| Homepage CMS (admin-editable content) | ✅ | hero + announcement + store details wired to `site_settings` via `SettingsContext` |
 | XML sitemap generation | ✅ | `scripts/generate-sitemap.mjs` (prebuild) → `public/sitemap.xml` from live catalog |
 | Product/Organization/LocalBusiness/FAQ/Breadcrumb schema | ✅ | implemented on relevant pages (mock data) |
 | GA4 + Search Console | ⬜ | post-deploy |

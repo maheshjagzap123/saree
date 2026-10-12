@@ -1,13 +1,15 @@
 import { WhatsAppIcon } from '../ui/icons'
-
-const number = import.meta.env.VITE_WHATSAPP_NUMBER || '919999999999'
+import { useSettings } from '../../context/SettingsContext'
 
 // Floating WhatsApp assistance button. Contextual copy ("Need help choosing?").
-// Product pages can pass a pre-filled, product-specific message.
+// Product pages can pass a pre-filled, product-specific message. The destination number
+// comes from site_settings('store').whatsapp, falling back to the env var.
 export default function WhatsAppButton({
   message = "Hi, I'd like help choosing a Paithani saree.",
   label = 'Need help choosing?',
 }) {
+  const { store } = useSettings()
+  const number = store.whatsapp || import.meta.env.VITE_WHATSAPP_NUMBER || '917588174528'
   const href = `https://wa.me/${number}?text=${encodeURIComponent(message)}`
   return (
     <a
